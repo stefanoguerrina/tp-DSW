@@ -18,9 +18,9 @@ Aplicación web orientada a facilitar la planificación y elección de comidas a
 
 
 ### Modelo
-<img width="1581" height="705" alt="CHEFCITO" src="https://github.com/user-attachments/assets/c99c57d2-4840-4b23-bed6-1bd133ec9771" />
+<img width="1581" height="705" alt="CHEFCITO" src="https://github.com/user-attachments/assets/37b77532-08e3-413b-95db-cb90089d3c1e" />
 
-<br>https://drive.google.com/file/d/1qhVu1HhclK_4AcHlgWWReyOWdjftukHB/view?usp=sharing
+<br>https://drive.google.com/file/d/1qhVu1HhclK_4AcHlgWWReyOWdjftukHB/view
 
 ## Alcance Funcional 
 
