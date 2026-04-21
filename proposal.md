@@ -31,22 +31,22 @@ Regularidad:
 |:-|:-|
 |CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria-Ingrediente<br>3. CRUD Receta<br>4. CRUD Categoria-Receta|
 |CRUD dependiente|1. CRUD Valoración {depende de} CRUD Usuario y CRUD Receta<br>2. CRUD Ingrediente {depende de} CRUD Categoria-Ingrediente|
-|Listado<br>+<br>detalle| 1. Listado de recetas filtrado por categoría, muestra nombre y descripción de receta => detalle CRUD Receta<br> 2.  Listado de recetas filtrado por valoración, muestra nombre, descripción, valoración de la receta y nombre del creador de la receta => detalle muestra datos completos de la receta y del creador|
+|Listado<br>+<br>detalle| 1. Listado de recetas filtrado por categoría. Muestra nombre y descripción de receta => Detalle CRUD Receta<br> 2.  Listado de recetas filtrado por valoración. Muestra nombre, descripción, valoración de la receta y nombre del creador de la receta => Detalle muestra datos completos de la receta y del creador|
 |CUU/Epic|1. Crear y publicar recetas<br>2. Reseñar recetas de otros usuarios|
 
 
-Adicionales para Aprobación
+Adicionales para Aprobación:
 |Req|Detalle|
 |:-|:-|
 |CRUD |1. CRUD Usuario<br>2. CRUD Categoria-Ingrediente<br>3. CRUD Receta<br>4. CRUD Categoria-Receta<br>5. CRUD Valoración<br>6. CRUD Ingrediente|
-|CUU/Epic|1. Crear y publicar recetas<br>2. Reseñar recetas de otros usuarios<br>3. Consultar recetas en base a ingredientes<br>4. Brindar asistencia personalizada (ChatBot)|
+|CUU/Epic|1. Crear y publicar recetas<br>2. Reseñar recetas de otros usuarios<br>3. Consultar recetas en base a ingredientes disponibles<br>4. Sistema de donaciones a creadores |
 
 
 ### Alcance Adicional Voluntario
 
 |Req|Detalle|
 |:-|:-|
-|Listados | AGREGAR |
-|CUU/Epic | AGREGAR |
-|Otros | AGREGAR |
+|Listados | 1. Listado de recetas filtrado por tiempo de preparación. Muestra nombre y descripción de receta => Detalle CRUD Receta<br> 2.  Listado de las diez recetas mejor valoradas en un plazo solicitado. Muestra nombre, descripción, valoración de la receta y nombre del creador de la receta => Detalle muestra datos completos de la receta y del creador<br> 3. Listado de recetas filtrado por necesidades nutricionales. Muestra nombre y descripción de receta => Detalle CRUD Receta |
+|CUU/Epic | 1. Consultar recetas disponibles según categoría<br>2. Consultar recetas mejor valoradas en un plazo determinado |
+|Otros | 1. Brindar asistencia personalizada mediante un ChatBot implementado con IA |
 
