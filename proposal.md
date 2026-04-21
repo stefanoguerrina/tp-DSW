@@ -2,7 +2,10 @@
 
 ## Grupo
 ### Integrantes
-* legajo - Apellido(s), Nombre(s)
+* 54394 - Alí, Elías
+* 54653 - Guerrina, Stéfano
+* 54780 - Persig, Juan Andrés
+* 54323 - Schujman, Gastón Enrique
 
 ### Repositorios
 * [frontend app](http://hyperlinkToGihubOrGitlab)
@@ -11,42 +14,40 @@
 
 ## Tema
 ### Descripción
-*2 a 6 líneas describiendo el negocio (menos es más)*
+Aplicación web orientada a facilitar la planificación y elección de comidas a partir de los ingredientes disponibles y las necesidades nutricionales del usuario. Combina la asistencia personalizada de un ChatBot IA con un formato estilo red social para crear, guardar y reseñar recetas.
+
 
 ### Modelo
-![imagen del modelo]()
+<img width="1581" height="705" alt="CHEFCITO" src="https://github.com/user-attachments/assets/c99c57d2-4840-4b23-bed6-1bd133ec9771" />
 
-*Nota*: incluir un link con la imagen de un modelo, puede ser modelo de dominio, diagrama de clases, DER. Si lo prefieren pueden utilizar diagramas con [Mermaid](https://mermaid.js.org) en lugar de imágenes.
+<br>https://drive.google.com/file/d/1qhVu1HhclK_4AcHlgWWReyOWdjftukHB/view?usp=sharing
 
 ## Alcance Funcional 
 
 ### Alcance Mínimo
 
-*Nota*: el siguiente es un ejemplo para un grupo de 3 integrantes para un sistema de hotel. El 
-
 Regularidad:
 |Req|Detalle|
 |:-|:-|
-|CRUD simple|1. CRUD Tipo Habitacion<br>2. CRUD Servicio<br>3. CRUD Localidad|
-|CRUD dependiente|1. CRUD Habitación {depende de} CRUD Tipo Habitacion<br>2. CRUD Cliente {depende de} CRUD Localidad|
-|Listado<br>+<br>detalle| 1. Listado de habitaciones filtrado por tipo de habitación, muestra nro y tipo de habitación => detalle CRUD Habitacion<br> 2. Listado de reservas filtrado por rango de fecha, muestra nro de habitación, fecha inicio y fin estadía, estado y nombre del cliente => detalle muestra datos completos de la reserva y del cliente|
-|CUU/Epic|1. Reservar una habitación para la estadía<br>2. Realizar el check-in de una reserva|
+|CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria-Ingrediente<br>3. CRUD Receta<br>4. CRUD Categoria-Receta|
+|CRUD dependiente|1. CRUD Valoración {depende de} CRUD Usuario y CRUD Receta<br>2. CRUD Ingrediente {depende de} CRUD Categoria-Ingrediente|
+|Listado<br>+<br>detalle| 1. Listado de recetas filtrado por categoría, muestra nombre y descripción de receta => detalle CRUD Receta<br> 2.  Listado de recetas filtrado por valoración, muestra nombre, descripción, valoración de la receta y nombre del creador de la receta => detalle muestra datos completos de la receta y del creador
+|
+|CUU/Epic|1. Crear y publicar recetas<br>2. Reseñar recetas de otros usuarios|
 
 
 Adicionales para Aprobación
 |Req|Detalle|
 |:-|:-|
-|CRUD |1. CRUD Tipo Habitacion<br>2. CRUD Servicio<br>3. CRUD Localidad<br>4. CRUD Provincia<br>5. CRUD Habitación<br>6. CRUD Empleado<br>7. CRUD Cliente|
-|CUU/Epic|1. Reservar una habitación para la estadía<br>2. Realizar el check-in de una reserva<br>3. Realizar el check-out y facturación de estadía y servicios|
+|CRUD |1. CRUD Usuario<br>2. CRUD Categoria-Ingrediente<br>3. CRUD Receta<br>4. CRUD Categoria-Receta<br>5. CRUD Valoración<br>6. CRUD Ingrediente|
+|CUU/Epic|1. Crear y publicar recetas<br>2. Reseñar recetas de otros usuarios<br>3. Consultar recetas en base a ingredientes<br>4. Brindar asistencia personalizada (ChatBot)|
 
 
 ### Alcance Adicional Voluntario
 
-*Nota*: El Alcance Adicional Voluntario es opcional, pero ayuda a que la funcionalidad del sistema esté completa y será considerado en la nota en función de su complejidad y esfuerzo.
-
 |Req|Detalle|
 |:-|:-|
-|Listados |1. Estadía del día filtrado por fecha muestra, cliente, habitaciones y estado <br>2. Reservas filtradas por cliente muestra datos del cliente y de cada reserve fechas, estado cantidad de habitaciones y huespedes|
-|CUU/Epic|1. Consumir servicios<br>2. Cancelación de reserva|
-|Otros|1. Envío de recordatorio de reserva por email|
+|Listados | AGREGAR |
+|CUU/Epic | AGREGAR |
+|Otros | AGREGAR |
 
