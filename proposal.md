@@ -2,10 +2,10 @@
 
 ## Grupo
 ### Integrantes
-* 54394 - Alí, Elías
-* 54653 - Guerrina, Stéfano
-* 54780 - Persig, Juan Andrés
-* 54323 - Schujman, Gastón Enrique
+* 54394 - Alí, Elías (3K02)
+* 54653 - Guerrina, Stéfano (3K02)
+* 54780 - Persig, Juan Andrés (3K02)
+* 54323 - Schujman, Gastón Enrique (3K02)
 
 ### Repositorios
 * [frontend app](http://hyperlinkToGihubOrGitlab)
