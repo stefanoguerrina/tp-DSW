@@ -31,8 +31,7 @@ Regularidad:
 |:-|:-|
 |CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria-Ingrediente<br>3. CRUD Receta<br>4. CRUD Categoria-Receta|
 |CRUD dependiente|1. CRUD Valoración {depende de} CRUD Usuario y CRUD Receta<br>2. CRUD Ingrediente {depende de} CRUD Categoria-Ingrediente|
-|Listado<br>+<br>detalle| 1. Listado de recetas filtrado por categoría, muestra nombre y descripción de receta => detalle CRUD Receta<br> 2.  Listado de recetas filtrado por valoración, muestra nombre, descripción, valoración de la receta y nombre del creador de la receta => detalle muestra datos completos de la receta y del creador
-|
+|Listado<br>+<br>detalle| 1. Listado de recetas filtrado por categoría, muestra nombre y descripción de receta => detalle CRUD Receta<br> 2.  Listado de recetas filtrado por valoración, muestra nombre, descripción, valoración de la receta y nombre del creador de la receta => detalle muestra datos completos de la receta y del creador|
 |CUU/Epic|1. Crear y publicar recetas<br>2. Reseñar recetas de otros usuarios|
 
 
