@@ -12,7 +12,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
     return (
         <div className="formLogin-overlay">
             <form className="loginform" onSubmit={handleSubmit}>
-                
+
                 <button
                     type="button"
                     className="closeButton"
@@ -25,11 +25,12 @@ const LoginForm = ({ onClose, onLoginSession }) => {
                     <input
                         className="formLoginNameInput"
                         type="text"
-                        id="userNameLogIn"
-                        name="userNameLogIn"
-                        placeholder="nombre de usuario"
-                        value={form.userName}
-                        onChange={(event) => handleInputChange(event, "userName")}
+                        id="emailLogIn"
+                        name="emailLogIn"
+                        placeholder="email"
+                        autoComplete="off"
+                        value={form.email}
+                        onChange={(event) => handleInputChange(event, "email")}
                     />
                 </div>
 
@@ -40,6 +41,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
                         type="password"
                         id="passwordLogIn"
                         name="passwordLogIn"
+                        autoComplete="off"
                         value={form.password}
                         onChange={(event) => handleInputChange(event, "password")}
                     />
@@ -57,7 +59,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
 
                 {errorOfData && (
                     <p className="ErrorText">
-                        Usuario o contraseña incorrecta
+                        Email o contraseña incorrecta
                     </p>
                 )}
             </form>

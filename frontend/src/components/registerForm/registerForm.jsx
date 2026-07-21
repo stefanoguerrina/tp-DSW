@@ -1,109 +1,104 @@
-import {useRegisterForm} from "./useRegisterForm"
+// Register form component displaying input fields and submitting to the backend.
+import { useRegisterForm } from "./useRegisterForm"
 
-const RegisterForm = ({onClose, onRegisterSubmit}) => {
-    const{
+const RegisterForm = ({ onClose, onRegisterSubmit }) => {
+    const {
         form,
         errorOfEmptyFields,
-        registerSucces,
+        errorOfRegister,
         handleInputChange,
         handleSubmit
-    } = useRegisterForm({onClose, onRegisterSubmit});
+    } = useRegisterForm({ onClose, onRegisterSubmit });
 
- return(
-      <div className="registerFormOverlay">
-        <form className="registerForm" onSubmit={handleSubmit}>
-            <div className="registerFormHeader">
-              <button
-                    type="button"
-                    className="closeButton"
-                    onClick={onClose}
-                >
-                    ✕
-                </button>
-            </div>
-
-            {registerSucces ? (
-                <div className="successContainer" >
-                    <h3 style={{ color: "green" }}>¡Registro exitoso!</h3>
-                    <p>Redirigiendo al login...</p>
+    return (
+        <div className="registerFormOverlay">
+            <form className="registerForm" onSubmit={handleSubmit}>
+                <div className="registerFormHeader">
+                    <button
+                        type="button"
+                        className="closeButton"
+                        onClick={onClose}
+                    >
+                        ✕
+                    </button>
                 </div>
-            ) : (
 
                 <>
                     <div className="registerForm__label">
-                        <input  
-                          className="registerFormInput"
-                          type="email" 
-                          placeholder="email del usuario"
-                          value={form.email}
-                          onChange={(event) => handleInputChange(event, "email")} 
+                        <input
+                            className="registerFormInput"
+                            type="email"
+                            placeholder="Email"
+                            value={form.email}
+                            onChange={(event) => handleInputChange(event, "email")}
                         />
                     </div>
 
                     <div className="registerForm__label">
-                        <input  
-                          className="registerFormInput"
-                          type="text" 
-                          placeholder="nombre de usuario"
-                          value={form.userName}
-                          onChange={(event) => handleInputChange(event, "userName")} 
+                        <input
+                            className="registerFormInput"
+                            type="text"
+                            placeholder="Username"
+                            value={form.userName}
+                            onChange={(event) => handleInputChange(event, "userName")}
                         />
                     </div>
 
                     <div className="registerForm__label">
-                        <input  
-                          className="registerFormInput"
-                          type="text" 
-                          placeholder="Nombre formal del usuario"
-                          value={form.formalName}
-                          onChange={(event) => handleInputChange(event, "formalName")} 
+                        <input
+                            className="registerFormInput"
+                            type="text"
+                            placeholder="First name"
+                            value={form.formalName}
+                            onChange={(event) => handleInputChange(event, "formalName")}
                         />
                     </div>
 
                     <div className="registerForm__label">
-                        <input  
-                          className="registerFormInput"
-                          type="text" 
-                          placeholder="Apellido"
-                          value={form.surName}
-                          onChange={(event) => handleInputChange(event, "surName")} 
+                        <input
+                            className="registerFormInput"
+                            type="text"
+                            placeholder="Last name"
+                            value={form.surName}
+                            onChange={(event) => handleInputChange(event, "surName")}
                         />
                     </div>
 
                     <div className="registerForm__label">
-                        <input  
-                          className="registerFormInput"
-                          type="password" 
-                          placeholder="Contraseña"
-                          value={form.password}
-                          onChange={(event) => handleInputChange(event, "password")} 
+                        <input
+                            className="registerFormInput"
+                            type="password"
+                            placeholder="Password"
+                            value={form.password}
+                            onChange={(event) => handleInputChange(event, "password")}
                         />
                     </div>
 
                     <div className="registerForm__label">
-                        <input  
-                          className="registerFormInput"
-                          type="text" 
-                          placeholder="Teléfono"
-                          value={form.telephone}
-                          onChange={(event) => handleInputChange(event, "telephone")} 
+                        <input
+                            className="registerFormInput"
+                            type="text"
+                            placeholder="Phone (optional)"
+                            value={form.telephone}
+                            onChange={(event) => handleInputChange(event, "telephone")}
                         />
                     </div>
-
 
                     {errorOfEmptyFields && (
-                        <p>Debes completar todos los campos pequeñin!</p>
+                        <p className="ErrorText">Please fill in all required fields.</p>
                     )}
 
+                    {errorOfRegister && (
+                        <p className="ErrorText">{errorOfRegister}</p>
+                    )}
 
                     <div className='registerForm-action'>
-                        <button type="submit">Registrarse</button>
+                        <button type="submit">Register</button>
                     </div>
                 </>
-            )}
-        </form>
-      </div>
-  )
-}
+            </form>
+        </div>
+    );
+};
 
-export default RegisterForm;
+export default RegisterForm;

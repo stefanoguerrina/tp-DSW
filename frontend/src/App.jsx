@@ -1,41 +1,33 @@
-<<<<<<< Updated upstream
+// Main application component managing authentication state and route navigation.
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
+import Auth from './pages/auth/index';
 
 function App() {
+  const [isAppLoggedIn, setIsAppLoggedIn] = useState(false);
+
+  // Updates authentication state when a user successfully logs in.
+  const handleSuccessfulLogin = () => {
+    setIsAppLoggedIn(true);
+  };
+
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Ruta principal del Frontend */}
-        <Route path="/" element={<Home />} />
-        
-        {/* Espacio reservado para futuras páginas (Ej: Registro, Login, etc) */}
-      </Routes>
-    </BrowserRouter>
+    <div className="App">
+      {!isAppLoggedIn ? (
+        <Auth onLoginSuccess={handleSuccessfulLogin} />
+      ) : (
+        <BrowserRouter>
+          <Routes>
+            {/* Main route of the Frontend */}
+            <Route path="/" element={<Home />} />
+
+            {/* Space reserved for future pages (e.g., Register, Login, etc.) */}
+          </Routes>
+        </BrowserRouter>
+      )}
+    </div>
   );
 }
 
-=======
-import { useState } from 'react';
-import Auth from './pages/auth/index'
-
-function App() {
-
-    const [isAppLoggedIn, setIsAppLoggedIn] = useState(false);
-
-    const handleLoginExitoso = () => {
-        setIsAppLoggedIn(true);
-    };
-
-    return (
-        <div className="App">
-            {!isAppLoggedIn ? (
-                <Auth onLoginSuccess={handleLoginExitoso} />
-            ) : (
-                <h1>llamar al home</h1>
-            )}
-        </div>
-    );
-}
->>>>>>> Stashed changes
 export default App;

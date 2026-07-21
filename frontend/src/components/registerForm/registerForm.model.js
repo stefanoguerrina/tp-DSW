@@ -3,13 +3,11 @@ export const formInitialState = {
     formalName: "",
     surName: "",
     password: "",
-    email:"",
-    telephone:""
+    email: "",
+    telephone: ""
 }
 
 
 export const checkEmptyFields = (form) => {
-
-    const hayCamposVacios = Object.values(form).some(value => value === "");
-    return !hayCamposVacios; 
+    return Object.values(form).some(value => value === "");
 };

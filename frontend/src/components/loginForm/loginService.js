@@ -1,22 +1,24 @@
-// La raíz de tu servidor (idealmente esto se saca de una variable de entorno .env)
-const API_BASE_URL = 'http://localhost:3000/api';
+// Service responsible for calling the login endpoint on the backend.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const loginService = async (datosUsuario) => {
-
+// Sends login credentials to the backend and returns the JWT token on success.
+// Throws an error if credentials are invalid or the request fails.
+export const loginService = async (form) => {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-
-        body: JSON.stringify(datosUsuario) 
+        // The backend login endpoint expects { email, password }
+        body: JSON.stringify({
+            email: form.email,
+            password: form.password
+        })
     });
 
     if (!response.ok) {
-        throw new Error('Credenciales incorrectas');
+        throw new Error('Invalid credentials.');
     }
 
-
-    const data = await response.json();
-    return data;
-};
+    return await response.json();
+};

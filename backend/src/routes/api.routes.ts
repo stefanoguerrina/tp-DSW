@@ -1,13 +1,21 @@
+// Central API router — mounts all feature sub-routers.
 import { Router } from 'express';
+import { authRouter } from './auth.routes.js';
+import pool from '../database.js';
 
 const apiRouter = Router();
 
-// Ruta base de prueba (Health Check)
-apiRouter.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    message: 'API de Chefcito funcionando correctamente' 
-  });
+// Health check endpoint — also tests the database connection
+apiRouter.get('/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'OK', database: 'connected' });
+  } catch (error: any) {
+    res.status(500).json({ status: 'ERROR', database: 'disconnected', detail: error.message });
+  }
 });
 
-export { apiRouter };
+// Authentication routes: POST /api/auth/register, POST /api/auth/login
+apiRouter.use('/auth', authRouter);
+
+export { apiRouter };

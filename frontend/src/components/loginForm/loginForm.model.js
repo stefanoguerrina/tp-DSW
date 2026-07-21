@@ -1,8 +1,10 @@
+// Initial state and validation for the login form.
 export const formInitialState = {
-    userName: "",
+    email: "",
     password: ""
 };
 
+// Returns true only when both fields are non-empty.
 export const validateForm = (form) => {
-    return form.userName !== "" && form.password !== "";
-};
+    return form.email !== "" && form.password !== "";
+};
