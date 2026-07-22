@@ -2,7 +2,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import pool from '../database.js';
 import { User } from '../models/user.model.js';
 
 const SALT_ROUNDS = 10;
@@ -20,15 +19,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    const [result] = await pool.execute(
-      'INSERT INTO user (username, password, name, lastName, email, phone) VALUES (?, ?, ?, ?, ?, ?)',
-      [username, hashedPassword, name, lastName, email, phone ?? null]
-    ) as any[];
-
-    const newUserId: number = result.insertId;
-
-    const [rows] = await pool.execute('SELECT * FROM user WHERE id = ?', [newUserId]) as any[];
-    const user = new User(rows[0]);
+    const user = await User.create({
+      username,
+      password: hashedPassword,
+      name,
+      lastName,
+      email,
+      phone,
+    });
 
     res.status(201).json(user.toPublic());
   } catch (error: any) {
@@ -59,14 +57,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const [rows] = await pool.execute('SELECT * FROM user WHERE email = ?', [email]) as any[];
+    const user = await User.findByEmail(email);
 
-    if (!rows || rows.length === 0) {
+    if (!user) {
       res.status(401).json({ message: 'Invalid credentials.' });
       return;
     }
 
-    const user = new User(rows[0]);
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {

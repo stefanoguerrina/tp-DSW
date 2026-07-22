@@ -1,8 +1,8 @@
 // Main application component managing authentication state and route navigation.
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home.jsx';
-import Auth from './pages/auth/index';
+import Home from './views/Home.jsx';
+import Auth from './views/auth/index';
 
 function App() {
   const [isAppLoggedIn, setIsAppLoggedIn] = useState(false);

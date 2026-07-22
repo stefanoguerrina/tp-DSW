@@ -23,8 +23,8 @@ export const useAuth = ({ onLoginSuccess }) => {
     }
 
     // handle that checks if the data from the form correspond to an user and change the state of setIsLogged to true
-    const handleLoginSessionSubmit = (respuestaBackend) => {
-        localStorage.setItem('token', respuestaBackend.token);
+    const handleLoginSessionSubmit = (backendResponse) => {
+        localStorage.setItem('token', backendResponse.token);
 
         onLoginSuccess();
         return true;
@@ -42,8 +42,8 @@ export const useAuth = ({ onLoginSuccess }) => {
         setShowRegisterForm(false)
     }
 
-    // handle that processes the register form submission (in a real app, this would interact with the backend to create a new user)
-    const handleRegisterSubmit = (BackendResponse) => {
+    // handle that processes the register form submission
+    const handleRegisterSubmit = (backendResponse) => {
         handleHideRegisterForm();
         setRegisterSucces(true);
         handleShowLoginForm();

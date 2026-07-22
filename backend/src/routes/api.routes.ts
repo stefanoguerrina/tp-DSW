@@ -1,6 +1,7 @@
 // Central API router — mounts all feature sub-routers.
 import { Router } from 'express';
 import { authRouter } from './auth.routes.js';
+import { userRouter } from './user.routes.js';
 import pool from '../database.js';
 
 const apiRouter = Router();
@@ -18,4 +19,6 @@ apiRouter.get('/health', async (req, res) => {
 // Authentication routes: POST /api/auth/register, POST /api/auth/login
 apiRouter.use('/auth', authRouter);
 
-export { apiRouter };
+apiRouter.use('/users', userRouter);
+
+export { apiRouter };
