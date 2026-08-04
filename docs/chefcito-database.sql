@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS chefcito_db;
+USE chefcito_db;
 -- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
 --
 -- Host: localhost    Database: chefcito_db
@@ -20,8 +22,6 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 --
 -- GTID state at the beginning of the backup 
 --
-
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '110cbf61-7baa-11f1-918f-d8bbc13d8c11:1-58';
 
 --
 -- Table structure for table `category`
