@@ -1,7 +1,7 @@
 // Express application entry point — configures middleware and mounts routers.
 import express from "express";
 import cors from "cors";
-import { apiRouter } from "./routes/api.routes.js";
+import { apiRouter } from "./routes/apiRouter.js";
 import path from 'path';
 import dotenv from 'dotenv';
 
