@@ -1,10 +1,10 @@
-// Middleware to verify JWT tokens on protected routes.
+// Middleware to verify JWT tokens and role-based access on protected routes.
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 // Extends the Express Request type to carry the decoded token payload.
 export interface AuthRequest extends Request {
-  user?: { id: number; username: string };
+  user?: { id: number; username: string; isAdmin: boolean };
 }
 
 // Reads the Authorization header, verifies the token, and attaches the payload to req.user.
@@ -26,10 +26,20 @@ export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction)
   }
 
   try {
-    const decoded = jwt.verify(token, secret) as { id: number; username: string };
+    const decoded = jwt.verify(token, secret) as { id: number; username: string; isAdmin: boolean };
     req.user = decoded;
     next();
   } catch {
     res.status(401).json({ message: 'Invalid or expired token.' });
   }
+};
+
+// Ensures the authenticated user has admin privileges.
+// Must be used after verifyToken. Returns 403 if user is not an admin.
+export const verifyAdmin = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  if (!req.user?.isAdmin) {
+    res.status(403).json({ message: 'Access denied. Administrator role required.' });
+    return;
+  }
+  next();
 };

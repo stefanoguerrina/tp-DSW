@@ -7,10 +7,11 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
+// Application initialization
 const app = express();
 const PORT = 3000;
 
-// Allow requests from the Vite frontend dev server
+// Middleware
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 

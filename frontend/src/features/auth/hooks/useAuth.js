@@ -26,7 +26,8 @@ export const useAuth = ({ onLoginSuccess }) => {
     const handleLoginSessionSubmit = (backendResponse) => {
         localStorage.setItem('token', backendResponse.token);
 
-        onLoginSuccess();
+        // Forward isAdmin so App.jsx can gate the admin panel rendering.
+        onLoginSuccess(backendResponse.isAdmin === true);
         return true;
     };
 

@@ -27,7 +27,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
                         type="text"
                         id="emailLogIn"
                         name="emailLogIn"
-                        placeholder="email"
+                        placeholder="Email o Username"
                         autoComplete="off"
                         value={form.email}
                         onChange={(event) => handleInputChange(event, "email")}
@@ -37,7 +37,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
                 <div className="loginForm__label">
                     <input
                         className="formLoginPasswordInput"
-                        placeholder="contraseña"
+                        placeholder="Contraseña"
                         type="password"
                         id="passwordLogIn"
                         name="passwordLogIn"
@@ -59,7 +59,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
 
                 {errorOfData && (
                     <p className="ErrorText">
-                        Email o contraseña incorrecta
+                        {typeof errorOfData === 'string' ? errorOfData : 'Email o contraseña incorrecta'}
                     </p>
                 )}
             </form>

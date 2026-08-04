@@ -1,6 +1,9 @@
 // Represents the User model and handles database queries for the `user` table.
 import pool from '../../../database.js';
 
+// Role ID that represents an administrator in the `role` table.
+export const ADMIN_ROLE_ID = 1;
+
 export interface CreateUserData {
   username: string;
   password: string;
@@ -72,7 +75,29 @@ export class User {
 
   // Finds a user by email and returns a User instance or null if not found.
   static async findByEmail(email: string): Promise<User | null> {
-    const [rows] = await pool.execute('SELECT * FROM user WHERE email = ?', [email]) as any[];
+    const [rows] = await pool.execute('SELECT * FROM user WHERE email = ?', [email.trim()]) as any[];
+    if (!rows || rows.length === 0) {
+      return null;
+    }
+    return new User(rows[0]);
+  }
+
+  // Finds a user by username and returns a User instance or null if not found.
+  static async findByUsername(username: string): Promise<User | null> {
+    const [rows] = await pool.execute('SELECT * FROM user WHERE username = ?', [username.trim()]) as any[];
+    if (!rows || rows.length === 0) {
+      return null;
+    }
+    return new User(rows[0]);
+  }
+
+  // Finds a user by email or username and returns a User instance or null if not found.
+  static async findByEmailOrUsername(identifier: string): Promise<User | null> {
+    const cleanIdentifier = identifier.trim();
+    const [rows] = await pool.execute(
+      'SELECT * FROM user WHERE email = ? OR username = ?',
+      [cleanIdentifier, cleanIdentifier]
+    ) as any[];
     if (!rows || rows.length === 0) {
       return null;
     }
@@ -87,6 +112,27 @@ export class User {
     }
 
     return rows.map((row: any) => new User(row));
+  }
+
+  // Returns the array of RoleIds assigned to the user in the `userrole` table.
+  // Returns an empty array if the user has no roles assigned.
+  static async getUserRoleIds(userId: number): Promise<number[]> {
+    const [rows] = await pool.execute(
+      'SELECT RoleId FROM userrole WHERE UserId = ?',
+      [userId]
+    ) as any[];
+    if (!rows || rows.length === 0) return [];
+    return rows.map((row: any) => row.RoleId);
+  }
+
+  // Deletes a user by ID and returns the deleted user.
+  static async deleteById(id: number): Promise<User | null> {
+    const user = await User.findById(id);
+    if (!user) {
+      return null;
+    }
+    await pool.execute('DELETE FROM user WHERE id = ?', [id]) as any[];
+    return user;
   }
 
 }

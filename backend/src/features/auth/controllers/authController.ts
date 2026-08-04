@@ -2,7 +2,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { User } from '../../user/models/userModel.js';
+import { User, ADMIN_ROLE_ID } from '../../user/models/userModel.js';
 
 const SALT_ROUNDS = 10;
 
@@ -17,21 +17,41 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
+    const existingUserByUsername = await User.findByUsername(username);
+    if (existingUserByUsername) {
+      res.status(409).json({ message: 'Username is already taken.' });
+      return;
+    }
+
+    const existingUserByEmail = await User.findByEmail(email);
+    if (existingUserByEmail) {
+      res.status(409).json({ message: 'Email is already taken.' });
+      return;
+    }
+
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const user = await User.create({
-      username,
+      username: username.trim(),
       password: hashedPassword,
-      name,
-      lastName,
-      email,
-      phone,
+      name: name.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      phone: phone ? phone.trim() : null,
     });
 
     res.status(201).json(user.toPublic());
   } catch (error: any) {
     // MySQL duplicate entry error code
     if (error.code === 'ER_DUP_ENTRY') {
+      if (error.sqlMessage && error.sqlMessage.includes('uq_user_username')) {
+        res.status(409).json({ message: 'Username is already taken.' });
+        return;
+      }
+      if (error.sqlMessage && error.sqlMessage.includes('uq_user_email')) {
+        res.status(409).json({ message: 'Email is already taken.' });
+        return;
+      }
       res.status(409).json({ message: 'Username or email is already taken.' });
       return;
     }
@@ -40,13 +60,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Logs in an existing user. Expects: email, password in req.body.
-// Returns 200 + { token } on success, or 401 on bad credentials.
+// Logs in an existing user. Expects: email or username, password in req.body.
+// Returns 200 + { token, isAdmin } on success, or 401 on bad credentials.
 export const login = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
+  const { email, username, password } = req.body;
+  const identifier = email || username;
 
-  if (!email || !password) {
-    res.status(400).json({ message: 'Missing required fields: email, password.' });
+  if (!identifier || !password) {
+    res.status(400).json({ message: 'Missing required fields: email or username, password.' });
     return;
   }
 
@@ -57,7 +78,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const user = await User.findByEmail(email);
+    const user = await User.findByEmailOrUsername(identifier);
 
     if (!user) {
       res.status(401).json({ message: 'Invalid credentials.' });
@@ -71,14 +92,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Sign a token with a non-sensitive payload; expires in 8 hours.
+    // Check if the user has the admin role in the userrole table.
+    const roleIds = await User.getUserRoleIds(user.id);
+    const isAdmin = roleIds.includes(ADMIN_ROLE_ID);
+
+    // Sign a token with a non-sensitive payload (including admin flag); expires in 8 hours.
     const token = jwt.sign(
-      { id: user.id, username: user.username },
+      { id: user.id, username: user.username, isAdmin },
       secret,
       { expiresIn: '8h' }
     );
 
-    res.status(200).json({ token });
+    // Return token and isAdmin so the frontend can gate admin-only sections.
+    res.status(200).json({ token, isAdmin });
   } catch (error) {
     console.error('[login] Unexpected error:', error);
     res.status(500).json({ message: 'Internal server error.' });

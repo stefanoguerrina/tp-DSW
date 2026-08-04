@@ -34,7 +34,7 @@ export const useLoginForm = ({ onClose, onLoginSession }) => {
 
         } catch (error) {
 
-            setErrorOfData(true);
+            setErrorOfData(error.message || 'Email o contraseña incorrecta');
         }
     };
     

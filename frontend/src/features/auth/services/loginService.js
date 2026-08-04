@@ -17,7 +17,8 @@ export const loginService = async (form) => {
     });
 
     if (!response.ok) {
-        throw new Error('Invalid credentials.');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Invalid credentials.');
     }
 
     return await response.json();
