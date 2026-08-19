@@ -1,3 +1,4 @@
+// Componente del formulario de inicio de sesión.
 import { useLoginForm } from "../hooks/useLoginForm";
 
 const LoginForm = ({ onClose, onLoginSession }) => {
@@ -27,7 +28,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
                         type="text"
                         id="emailLogIn"
                         name="emailLogIn"
-                        placeholder="email"
+                        placeholder="Email o usuario"
                         autoComplete="off"
                         value={form.email}
                         onChange={(event) => handleInputChange(event, "email")}
@@ -37,7 +38,7 @@ const LoginForm = ({ onClose, onLoginSession }) => {
                 <div className="loginForm__label">
                     <input
                         className="formLoginPasswordInput"
-                        placeholder="contraseña"
+                        placeholder="Contraseña"
                         type="password"
                         id="passwordLogIn"
                         name="passwordLogIn"
@@ -53,13 +54,13 @@ const LoginForm = ({ onClose, onLoginSession }) => {
 
                 {errorOfEmptyFields && (
                     <p className="ErrorText">
-                        Debes completar todos los campos!
+                        Debés completar todos los campos.
                     </p>
                 )}
 
                 {errorOfData && (
                     <p className="ErrorText">
-                        Email o contraseña incorrecta
+                        {typeof errorOfData === 'string' ? errorOfData : 'Email o contraseña incorrectos.'}
                     </p>
                 )}
             </form>

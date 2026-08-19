@@ -1,86 +1,92 @@
-// Controller handling user registration and login logic.
+// Controller de autenticación — maneja registro y login de usuarios.
+// La validación de formato la hace el middleware; acá se manejan reglas de negocio y respuestas HTTP.
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { User } from '../../user/models/userModel.js';
+import { validationResult } from 'express-validator';
+import * as authService from '../services/authService.js';
 
-const SALT_ROUNDS = 10;
-
-// Registers a new user. Expects: username, password, name, lastName, email, phone? in req.body.
-// Returns 201 + the created user (no password), or 409 if email/username already exists.
+// Registra un nuevo usuario.
+// POST /api/auth/register
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { username, password, name, lastName, email, phone } = req.body;
-
-  if (!username || !password || !name || !lastName || !email) {
-    res.status(400).json({ message: 'Missing required fields: username, password, name, lastName, email.' });
+  // Doble chequeo: el middleware ya capturó errores, pero si algo pasó, respondemos acá.
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(422).json({
+      errores: errors.array().map((e) => ({
+        campo: e.type === 'field' ? (e as any).path : 'general',
+        mensaje: e.msg,
+      })),
+    });
     return;
   }
 
+  const { username, password, name, lastName, email, phone } = req.body;
+
   try {
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    const result = await authService.register({ username, password, name, lastName, email, phone });
 
-    const user = await User.create({
-      username,
-      password: hashedPassword,
-      name,
-      lastName,
-      email,
-      phone,
-    });
+    if (!result.ok) {
+      // Mensajes específicos según la razón del fallo.
+      if (result.reason === 'username_taken') {
+        res.status(409).json({ message: 'El nombre de usuario ya está en uso.' });
+        return;
+      }
+      if (result.reason === 'email_taken') {
+        res.status(409).json({ message: 'El email ingresado ya está registrado.' });
+        return;
+      }
+    }
 
-    res.status(201).json(user.toPublic());
+    res.status(201).json(result.ok ? result.user : {});
   } catch (error: any) {
-    // MySQL duplicate entry error code
-    if (error.code === 'ER_DUP_ENTRY') {
-      res.status(409).json({ message: 'Username or email is already taken.' });
+    // P2002 es el código de Prisma para violación de unique constraint.
+    if (error.code === 'P2002') {
+      res.status(409).json({ message: 'El nombre de usuario o email ya están en uso.' });
       return;
     }
-    console.error('[register] Unexpected error:', error);
-    res.status(500).json({ message: 'Internal server error.' });
+    console.error('[register] Error inesperado:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
 
-// Logs in an existing user. Expects: email, password in req.body.
-// Returns 200 + { token } on success, or 401 on bad credentials.
+// Autentica a un usuario con email o username y contraseña.
+// POST /api/auth/login
 export const login = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    res.status(400).json({ message: 'Missing required fields: email, password.' });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(422).json({
+      errores: errors.array().map((e) => ({
+        campo: e.type === 'field' ? (e as any).path : 'general',
+        mensaje: e.msg,
+      })),
+    });
     return;
   }
 
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    res.status(500).json({ message: 'Server configuration error: JWT_SECRET is not set.' });
+  const { email, username, password } = req.body;
+  // Acepta tanto email como username como identificador.
+  const identifier = (email || username || '').trim();
+
+  if (!identifier) {
+    res.status(400).json({ message: 'Debés ingresar tu email o nombre de usuario.' });
     return;
   }
 
   try {
-    const user = await User.findByEmail(email);
+    const result = await authService.login(identifier, password);
 
-    if (!user) {
-      res.status(401).json({ message: 'Invalid credentials.' });
+    if (!result.ok) {
+      if (result.reason === 'no_jwt_secret') {
+        res.status(500).json({ message: 'Error de configuración del servidor.' });
+        return;
+      }
+      // Mensaje genérico intencional: no revelar si el usuario existe o no (seguridad).
+      res.status(401).json({ message: 'Email, usuario o contraseña incorrectos.' });
       return;
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
-      res.status(401).json({ message: 'Invalid credentials.' });
-      return;
-    }
-
-    // Sign a token with a non-sensitive payload; expires in 8 hours.
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      secret,
-      { expiresIn: '8h' }
-    );
-
-    res.status(200).json({ token });
+    res.status(200).json({ token: result.token, isAdmin: result.isAdmin });
   } catch (error) {
-    console.error('[login] Unexpected error:', error);
-    res.status(500).json({ message: 'Internal server error.' });
+    console.error('[login] Error inesperado:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };

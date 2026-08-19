@@ -1,5 +1,5 @@
-// Register form component displaying input fields and submitting to the backend.
-import { useRegisterForm } from "../hooks/useRegisterForm"
+// Componente del formulario de registro de nuevo usuario.
+import { useRegisterForm } from "../hooks/useRegisterForm";
 
 const RegisterForm = ({ onClose, onRegisterSubmit }) => {
     const {
@@ -38,7 +38,7 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                         <input
                             className="registerFormInput"
                             type="text"
-                            placeholder="Username"
+                            placeholder="Nombre de usuario"
                             value={form.userName}
                             onChange={(event) => handleInputChange(event, "userName")}
                         />
@@ -48,7 +48,7 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                         <input
                             className="registerFormInput"
                             type="text"
-                            placeholder="First name"
+                            placeholder="Nombre"
                             value={form.formalName}
                             onChange={(event) => handleInputChange(event, "formalName")}
                         />
@@ -58,7 +58,7 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                         <input
                             className="registerFormInput"
                             type="text"
-                            placeholder="Last name"
+                            placeholder="Apellido"
                             value={form.surName}
                             onChange={(event) => handleInputChange(event, "surName")}
                         />
@@ -68,7 +68,7 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                         <input
                             className="registerFormInput"
                             type="password"
-                            placeholder="Password"
+                            placeholder="Contraseña"
                             value={form.password}
                             onChange={(event) => handleInputChange(event, "password")}
                         />
@@ -78,14 +78,14 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                         <input
                             className="registerFormInput"
                             type="text"
-                            placeholder="Phone (optional)"
+                            placeholder="Teléfono (opcional)"
                             value={form.telephone}
                             onChange={(event) => handleInputChange(event, "telephone")}
                         />
                     </div>
 
                     {errorOfEmptyFields && (
-                        <p className="ErrorText">Please fill in all required fields.</p>
+                        <p className="ErrorText">Por favor, completá todos los campos requeridos.</p>
                     )}
 
                     {errorOfRegister && (
@@ -93,7 +93,7 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                     )}
 
                     <div className='registerForm-action'>
-                        <button type="submit">Register</button>
+                        <button type="submit">Registrarse</button>
                     </div>
                 </>
             </form>

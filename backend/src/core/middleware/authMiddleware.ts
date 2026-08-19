@@ -1,19 +1,19 @@
-// Middleware to verify JWT tokens on protected routes.
+// Middleware para verificar tokens JWT y control de acceso basado en roles.
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-// Extends the Express Request type to carry the decoded token payload.
+// Extiende el tipo Request de Express para incluir el payload del token decodificado.
 export interface AuthRequest extends Request {
-  user?: { id: number; username: string };
+  user?: { id: number; username: string; isAdmin: boolean };
 }
 
-// Reads the Authorization header, verifies the token, and attaches the payload to req.user.
-// Returns 401 if the token is missing or invalid.
+// Lee el header Authorization, verifica el token JWT y adjunta el payload en req.user.
+// Devuelve 401 si el token está ausente o es inválido.
 export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({ message: 'Access denied. No token provided.' });
+    res.status(401).json({ message: 'Acceso denegado. No se proporcionó un token.' });
     return;
   }
 
@@ -21,15 +21,44 @@ export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction)
   const secret = process.env.JWT_SECRET;
 
   if (!secret) {
-    res.status(500).json({ message: 'Server configuration error: JWT_SECRET is not set.' });
+    res.status(500).json({ message: 'Error de configuración del servidor: JWT_SECRET no está definido.' });
     return;
   }
 
   try {
-    const decoded = jwt.verify(token, secret) as { id: number; username: string };
+    const decoded = jwt.verify(token, secret) as { id: number; username: string; isAdmin: boolean };
     req.user = decoded;
     next();
   } catch {
-    res.status(401).json({ message: 'Invalid or expired token.' });
+    res.status(401).json({ message: 'Token inválido o expirado.' });
   }
+};
+
+// Verifica que el usuario autenticado tenga rol de administrador.
+// Debe usarse después de verifyToken. Devuelve 403 si no es admin.
+export const verifyAdmin = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  if (!req.user?.isAdmin) {
+    res.status(403).json({ message: 'Acceso denegado. Se requiere rol de administrador.' });
+    return;
+  }
+  next();
+};
+
+// Verifica que el usuario autenticado sea el dueño del recurso (por ID en params)
+// o que sea administrador. Permite que un usuario solo acceda a sus propios datos,
+// pero le da al admin acceso total. Devuelve 403 si ninguna condición se cumple.
+export const verifyOwnerOrAdmin = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  const requestedId = Number(req.params.id);
+
+  if (!req.user) {
+    res.status(401).json({ message: 'Acceso denegado. No se proporcionó un token.' });
+    return;
+  }
+
+  if (req.user.isAdmin || req.user.id === requestedId) {
+    next();
+    return;
+  }
+
+  res.status(403).json({ message: 'Acceso denegado. Solo podés modificar tu propia cuenta.' });
 };

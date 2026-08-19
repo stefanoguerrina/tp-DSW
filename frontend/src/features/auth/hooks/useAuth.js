@@ -1,56 +1,42 @@
-// Custom hook to manage authentication state and logic.
+// Hook personalizado que gestiona el estado de autenticación y la lógica de navegación
+// entre el formulario de login y el de registro.
 import { useState } from "react";
-
 
 export const useAuth = ({ onLoginSuccess }) => {
 
-    // useState thats allow to show and hide the loginForm 
+    // Controla la visibilidad del formulario de login.
     const [showLoginForm, setShowLoginForm] = useState(false);
-
+    // Controla la visibilidad del formulario de registro.
+    const [showRegisterForm, setShowRegisterForm] = useState(false);
+    // Indica si el último registro fue exitoso (para mostrar feedback al usuario).
     const [registerSucces, setRegisterSucces] = useState(false);
 
-    /*useState thats allow to show and hide te register form*/
-    const [showRegisterForm, setShowRegisterForm] = useState(false)
+    const handleShowLoginForm = () => setShowLoginForm(true);
+    const handleHideLoginForm = () => setShowLoginForm(false);
 
-    // handle that changes the state of the form to true in order to show it 
-    const handleShowLoginForm = () => {
-        setShowLoginForm(true)
-    }
-
-    // handle that changes the state of the form to false in order to hide it, used as a prop later 
-    const handleHideLoginForm = () => {
-        setShowLoginForm(false)
-    }
-
-    // handle that checks if the data from the form correspond to an user and change the state of setIsLogged to true
+    // Procesa la respuesta del backend tras un login exitoso.
+    // Guarda el token en localStorage y avisa al componente padre (App.jsx).
     const handleLoginSessionSubmit = (backendResponse) => {
         localStorage.setItem('token', backendResponse.token);
-
-        onLoginSuccess();
+        onLoginSuccess(backendResponse.isAdmin === true);
         return true;
     };
 
+    const handleRegisterForm = () => setShowRegisterForm(true);
 
-    // handle that changes the state of the form to true in order to show it 
-    const handleRegisterForm = () => {
-        setShowRegisterForm(true)
-    }
-
-    // handle that changes the state of the form to true in order to hide it 
     const handleHideRegisterForm = () => {
         setRegisterSucces(false);
-        setShowRegisterForm(false)
-    }
+        setShowRegisterForm(false);
+    };
 
-    // handle that processes the register form submission
-    const handleRegisterSubmit = (backendResponse) => {
+    // Tras un registro exitoso, oculta el form de registro y muestra el de login.
+    const handleRegisterSubmit = () => {
         handleHideRegisterForm();
         setRegisterSucces(true);
         handleShowLoginForm();
-    }
+    };
 
     return {
-
         showLoginForm,
         showRegisterForm,
         registerSucces,

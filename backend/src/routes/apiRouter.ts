@@ -2,21 +2,14 @@
 import { Router } from 'express';
 import { authRouter } from '../features/auth/routes/authRouter.js';
 import { userRouter } from '../features/user/routes/userRouter.js';
-import pool from '../database.js';
+import { databaseRouter } from '../features/database/routes/databaseRouter.js'
 
 const apiRouter = Router();
 
-// Health check endpoint — also tests the database connection
-apiRouter.get('/health', async (req, res) => {
-  try {
-    await pool.query('SELECT 1');
-    res.json({ status: 'OK', database: 'connected' });
-  } catch (error: any) {
-    res.status(500).json({ status: 'ERROR', database: 'disconnected', detail: error.message });
-  }
-});
+// Database routes
+apiRouter.use('/database', databaseRouter);
 
-// Authentication routes: POST /api/auth/register, POST /api/auth/login
+// Authentication routes
 apiRouter.use('/auth', authRouter);
 
 apiRouter.use('/users', userRouter);
