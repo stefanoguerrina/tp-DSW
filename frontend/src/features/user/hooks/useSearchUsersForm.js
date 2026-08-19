@@ -1,4 +1,4 @@
-// Custom hook managing state and logic for the user search and admin panel component.
+// Hook que gestiona el estado y la lógica del panel de administración de usuarios.
 import { useState, useEffect } from 'react';
 import { searchUsersService } from '../services/searchUsersService.js';
 import { deleteUserService } from '../services/deleteUserService.js';
@@ -8,11 +8,11 @@ export const useSearchUsersForm = () => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    // ID of the user currently being deleted (to show loading state per row)
+    // ID del usuario que está siendo eliminado en este momento (para mostrar estado de carga por fila).
     const [deletingUserId, setDeletingUserId] = useState(null);
     const [deleteError, setDeleteError] = useState('');
 
-    // Fetches users from the backend service.
+    // Solicita la lista de usuarios al backend.
     const fetchUsers = async () => {
         setIsLoading(true);
         setError('');
@@ -20,50 +20,46 @@ export const useSearchUsersForm = () => {
             const data = await searchUsersService();
             setUsers(data);
         } catch (err) {
-            console.error('[useSearchUsersForm] Error fetching users:', err);
-            setError(err.message || 'Error loading users list.');
+            console.error('[useSearchUsersForm] Error al obtener usuarios:', err);
+            setError(err.message || 'Error al cargar la lista de usuarios.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Load users list when component mounts.
+    // Carga la lista de usuarios cuando el componente se monta.
     useEffect(() => {
         fetchUsers();
     }, []);
 
-    // Updates search term input state.
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
+    const handleSearchChange = (event) => setSearchTerm(event.target.value);
 
-    // Sends DELETE request for the given user ID and removes them from local state on success.
+    // Envía la petición de baja lógica y elimina el usuario del estado local al completarse.
     const handleDeleteUser = async (userId) => {
         setDeleteError('');
         setDeletingUserId(userId);
         try {
             await deleteUserService(userId);
-            // Optimistically remove deleted user from the list
+            // Actualización optimista: saca el usuario de la lista local sin esperar otro fetch.
             setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
         } catch (err) {
-            console.error('[useSearchUsersForm] Error deleting user:', err);
-            setDeleteError(err.message || 'Failed to delete user.');
+            console.error('[useSearchUsersForm] Error al eliminar usuario:', err);
+            setDeleteError(err.message || 'Error al dar de baja al usuario.');
         } finally {
             setDeletingUserId(null);
         }
     };
 
-    // Filter users list based on search input (matches username, name, lastName, or email).
+    // Filtra la lista según el término de búsqueda (username, nombre, apellido o email).
     const filteredUsers = users.filter((user) => {
         const query = searchTerm.toLowerCase().trim();
         if (!query) return true;
-
-        const usernameMatch = user.username?.toLowerCase().includes(query);
-        const nameMatch = user.name?.toLowerCase().includes(query);
-        const lastNameMatch = user.lastName?.toLowerCase().includes(query);
-        const emailMatch = user.email?.toLowerCase().includes(query);
-
-        return usernameMatch || nameMatch || lastNameMatch || emailMatch;
+        return (
+            user.username?.toLowerCase().includes(query) ||
+            user.name?.toLowerCase().includes(query) ||
+            user.lastName?.toLowerCase().includes(query) ||
+            user.email?.toLowerCase().includes(query)
+        );
     });
 
     return {

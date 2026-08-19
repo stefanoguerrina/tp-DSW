@@ -1,22 +1,20 @@
-// Custom hook managing register form state, validation, and backend submission.
+// Hook que gestiona el estado y la lógica del formulario de registro.
 import { useState } from "react";
-import { formInitialState } from "../models/registerModel";
-import { checkEmptyFields } from "../models/registerModel";
+import { formInitialState, checkEmptyFields } from "../models/registerModel";
 import { registerService } from "../services/registerService";
 
 export const useRegisterForm = ({ onClose, onRegisterSubmit }) => {
 
     const [form, setForm] = useState(formInitialState);
+    // true si el usuario intentó enviar el form con campos requeridos vacíos.
     const [errorOfEmptyFields, setErrorOfEmptyFields] = useState(false);
+    // Mensaje de error devuelto por el backend (ej: usuario o email ya en uso).
     const [errorOfRegister, setErrorOfRegister] = useState("");
 
     const handleInputChange = (event, attr) => {
         setErrorOfEmptyFields(false);
         setErrorOfRegister("");
-        setForm((prevForm) => ({
-            ...prevForm,
-            [attr]: event.target.value
-        }));
+        setForm((prevForm) => ({ ...prevForm, [attr]: event.target.value }));
     };
 
     const handleSubmit = async (event) => {
@@ -34,16 +32,10 @@ export const useRegisterForm = ({ onClose, onRegisterSubmit }) => {
             setForm(formInitialState);
             onClose();
         } catch (error) {
-            // Show the backend's error message if available (e.g. "Username or email is already taken.")
-            setErrorOfRegister(error.message || "Registration failed. Please try again.");
+            // Muestra el mensaje de error del backend si está disponible.
+            setErrorOfRegister(error.message || "Error al registrarse. Intentá de nuevo.");
         }
     };
 
-    return {
-        form,
-        errorOfEmptyFields,
-        errorOfRegister,
-        handleInputChange,
-        handleSubmit
-    };
+    return { form, errorOfEmptyFields, errorOfRegister, handleInputChange, handleSubmit };
 };

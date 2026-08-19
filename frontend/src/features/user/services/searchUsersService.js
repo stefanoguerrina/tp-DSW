@@ -1,7 +1,8 @@
-// Service responsible for calling the users search endpoint on the backend.
+// Servicio que llama al endpoint de listado de usuarios del backend.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Fetches the list of all registered users from the backend.
+// Obtiene la lista de todos los usuarios activos del servidor.
+// Requiere token JWT de administrador en localStorage.
 export const searchUsersService = async () => {
     const token = localStorage.getItem('token');
     const response = await fetch(`${API_BASE_URL}/users`, {
@@ -13,10 +14,8 @@ export const searchUsersService = async () => {
     });
 
     if (!response.ok) {
-        if (response.status === 404) {
-            return [];
-        }
-        throw new Error('Failed to fetch users from server.');
+        if (response.status === 404) return [];
+        throw new Error('Error al obtener la lista de usuarios del servidor.');
     }
 
     return await response.json();

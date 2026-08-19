@@ -1,14 +1,13 @@
-// Service responsible for calling the register endpoint on the backend.
+// Servicio de registro — llama al endpoint de creación de cuenta del backend.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Sends user registration data to the backend and returns the created user on success.
-// Maps frontend form field names to the names the backend API expects.
+// Envía los datos de registro al backend.
+// Si hay errores de validación (422), los lanza como string con los mensajes específicos por campo.
+// Si hay conflicto (409), lanza el mensaje del backend (ej: "El email ya está registrado.").
 export const registerService = async (form) => {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             username: form.userName,
             name: form.formalName,
@@ -21,7 +20,15 @@ export const registerService = async (form) => {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Error registering user.');
+
+        // Si el backend devolvió errores de campo específicos (validación), los mostramos.
+        if (errorData.errores && Array.isArray(errorData.errores)) {
+            const mensajes = errorData.errores.map((e) => e.mensaje).join(' ');
+            throw new Error(mensajes);
+        }
+
+        // Si es un conflicto (409) o cualquier otro error, usamos el mensaje del backend.
+        throw new Error(errorData.message || 'Error al registrar el usuario. Intentá de nuevo.');
     }
 
     return await response.json();

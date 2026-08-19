@@ -1,8 +1,9 @@
-// Service responsible for calling the delete user endpoint on the backend.
+// Servicio que llama al endpoint de baja lógica de usuario del backend.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Sends a DELETE request for a user by their ID.
-// Returns the deleted user data on success, or throws an error with a descriptive message.
+// Envía una petición DELETE para dar de baja (lógicamente) a un usuario por su ID.
+// El backend setea deletedAt en lugar de borrar el registro.
+// Requiere token JWT de administrador en localStorage.
 export const deleteUserService = async (userId) => {
     const token = localStorage.getItem('token');
 
@@ -16,7 +17,7 @@ export const deleteUserService = async (userId) => {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to delete user.');
+        throw new Error(errorData.message || 'Error al eliminar el usuario.');
     }
 
     return await response.json();
