@@ -2,12 +2,16 @@
 import { Router } from 'express';
 import {
   searchUsers,
+  getUserById,
+  createUser,
   deleteUserById,
+  restoreUserById,
   updateUserById,
   changeUserPassword,
 } from '../controllers/userController.js';
 import { verifyToken, verifyAdmin, verifyOwnerOrAdmin } from '../../../core/middleware/authMiddleware.js';
 import {
+  validateCreateUser,
   validateUpdateUser,
   validateChangePassword,
   handleValidationErrors,
@@ -15,11 +19,21 @@ import {
 
 const userRouter = Router();
 
-// GET /api/users — devuelve todos los usuarios activos (solo admin)
-userRouter.get('/', verifyToken, verifyAdmin, searchUsers);
+// GET /api/users — devuelve todos los usuarios activos (cualquier usuario autenticado)
+// Con ?inactive=true devuelve usuarios dados de baja (solo admin)
+userRouter.get('/', verifyToken, searchUsers);
 
-// DELETE /api/users/:id — baja lógica de usuario (solo admin)
-userRouter.delete('/:id', verifyToken, verifyAdmin, deleteUserById);
+// GET /api/users/:id — devuelve un usuario activo por ID (el propio usuario o admin)
+userRouter.get('/:id', verifyToken, verifyOwnerOrAdmin, getUserById);
+
+// POST /api/users — crea un nuevo usuario (solo admin, puede asignar rol admin con makeAdmin=true)
+userRouter.post('/', verifyToken, verifyAdmin, validateCreateUser, handleValidationErrors, createUser);
+
+// DELETE /api/users/:id — baja lógica de usuario (el propio usuario o admin)
+userRouter.delete('/:id', verifyToken, verifyOwnerOrAdmin, deleteUserById);
+
+// PATCH /api/users/:id/restore — reactiva a un usuario dado de baja (solo admin)
+userRouter.patch('/:id/restore', verifyToken, verifyAdmin, restoreUserById);
 
 // PATCH /api/users/:id — modifica datos del usuario (el propio usuario o admin)
 userRouter.patch('/:id', verifyToken, verifyOwnerOrAdmin, validateUpdateUser, handleValidationErrors, updateUserById);

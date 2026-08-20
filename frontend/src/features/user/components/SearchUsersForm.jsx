@@ -1,6 +1,17 @@
-// Admin panel component for searching, displaying, and deleting registered users.
+// Admin panel component for searching, displaying, and managing registered users.
+// Includes the full user CRUD: list, search, create (via CreateUserForm), delete and restore.
+import { useState } from 'react';
 import { useSearchUsersForm } from '../hooks/useSearchUsersForm.js';
+import CreateUserForm from './CreateUserForm.jsx';
 import '../styles/admin-panel.css';
+
+// Formatea una fecha ISO (YYYY-MM-DD o DateTime) a formato legible DD/MM/AAAA.
+const formatDate = (dateValue) => {
+    if (!dateValue) return null;
+    const datePart = String(dateValue).slice(0, 10);
+    const [year, month, day] = datePart.split('-');
+    return `${day}/${month}/${year}`;
+};
 
 const SearchUsersForm = () => {
     const {
@@ -9,14 +20,23 @@ const SearchUsersForm = () => {
         totalUsersCount,
         isLoading,
         error,
+        showInactive,
         deletingUserId,
         deleteError,
+        restoringUserId,
+        restoreError,
         handleSearchChange,
         handleRefresh,
-        handleDeleteUser
+        handleToggleInactive,
+        handleDeleteUser,
+        handleRestoreUser,
+        handleUserCreated
     } = useSearchUsersForm();
 
-    // Asks for confirmation before deleting — avoids accidental removals.
+    // Controla si se muestra el formulario de alta de usuario.
+    const [showCreateForm, setShowCreateForm] = useState(false);
+
+    // Pide confirmación antes de eliminar — evita bajas accidentales.
     const handleDeleteClick = (user) => {
         const confirmed = window.confirm(
             `¿Estás seguro de que querés eliminar al usuario "@${user.username}" (${user.name} ${user.lastName})?\n\nEsta acción no se puede deshacer.`
@@ -26,12 +46,28 @@ const SearchUsersForm = () => {
         }
     };
 
+    // Pide confirmación antes de restaurar.
+    const handleRestoreClick = (user) => {
+        const confirmed = window.confirm(
+            `¿Querés reactivar la cuenta de "@${user.username}" (${user.name} ${user.lastName})?`
+        );
+        if (confirmed) {
+            handleRestoreUser(user.id);
+        }
+    };
+
+    // Al crear un usuario exitosamente, cierra el formulario y actualiza la lista.
+    const handleUserCreatedAndClose = (newUser) => {
+        handleUserCreated(newUser);
+        setShowCreateForm(false);
+    };
+
     return (
         <div className="admin-panel">
             <div className="admin-panel__header">
                 <h2 className="admin-panel__title">Panel de Administración — Usuarios</h2>
                 <span className="admin-panel__count">
-                    {totalUsersCount} usuario{totalUsersCount !== 1 ? 's' : ''} registrado{totalUsersCount !== 1 ? 's' : ''}
+                    {totalUsersCount} usuario{totalUsersCount !== 1 ? 's' : ''} {showInactive ? 'inactivo' : 'registrado'}{totalUsersCount !== 1 ? 's' : ''}
                 </span>
             </div>
 
@@ -51,20 +87,44 @@ const SearchUsersForm = () => {
                 >
                     {isLoading ? 'Cargando...' : '↻ Refrescar'}
                 </button>
+                {/* Toggle entre activos e inactivos */}
+                <button
+                    className={`admin-panel__btn ${showInactive ? 'admin-panel__btn--toggle-active' : 'admin-panel__btn--toggle-inactive'}`}
+                    onClick={handleToggleInactive}
+                    disabled={isLoading}
+                    id="toggleInactiveUsers"
+                >
+                    {showInactive ? '✓ Ver activos' : '☁ Ver inactivos'}
+                </button>
+                {/* Solo mostrar el botón de nuevo usuario cuando estamos en la vista de activos */}
+                {!showInactive && (
+                    <button
+                        className="admin-panel__btn admin-panel__btn--new"
+                        onClick={() => setShowCreateForm((prev) => !prev)}
+                        id="toggleCreateUserForm"
+                    >
+                        {showCreateForm ? '✕ Cancelar' : '+ Nuevo usuario'}
+                    </button>
+                )}
             </div>
 
-            {/* Global fetch error */}
-            {error && (
-                <div className="admin-panel__alert admin-panel__alert--error">
-                    ⚠ {error}
-                </div>
+            {/* Formulario de alta de usuario (desplegable) */}
+            {showCreateForm && !showInactive && (
+                <CreateUserForm
+                    onUserCreated={handleUserCreatedAndClose}
+                    onCancel={() => setShowCreateForm(false)}
+                />
             )}
 
-            {/* Delete error feedback */}
+            {/* Error global del fetch */}
+            {error && (
+                <div className="admin-panel__alert admin-panel__alert--error">⚠ {error}</div>
+            )}
             {deleteError && (
-                <div className="admin-panel__alert admin-panel__alert--error">
-                    ⚠ {deleteError}
-                </div>
+                <div className="admin-panel__alert admin-panel__alert--error">⚠ {deleteError}</div>
+            )}
+            {restoreError && (
+                <div className="admin-panel__alert admin-panel__alert--error">⚠ {restoreError}</div>
             )}
 
             {isLoading && (
@@ -72,13 +132,17 @@ const SearchUsersForm = () => {
             )}
 
             {!isLoading && !error && filteredUsers.length === 0 && (
-                <p className="admin-panel__empty">No se encontraron usuarios.</p>
+                <p className="admin-panel__empty">
+                    {showInactive
+                        ? 'No hay usuarios inactivos.'
+                        : 'No se encontraron usuarios.'}
+                </p>
             )}
 
             {!isLoading && filteredUsers.length > 0 && (
                 <ul className="admin-panel__list">
                     {filteredUsers.map((user) => (
-                        <li key={user.id} className="admin-panel__item">
+                        <li key={user.id} className={`admin-panel__item ${showInactive ? 'admin-panel__item--inactive' : ''}`}>
                             <div className="admin-panel__item-info">
                                 <span className="admin-panel__item-username">@{user.username}</span>
                                 <span className="admin-panel__item-fullname">
@@ -88,16 +152,40 @@ const SearchUsersForm = () => {
                                 {user.phone && (
                                     <span className="admin-panel__item-phone">📞 {user.phone}</span>
                                 )}
+                                {user.birthDate && (
+                                    <span className="admin-panel__item-birthdate">
+                                        🎂 {formatDate(user.birthDate)}
+                                    </span>
+                                )}
+                                {showInactive && user.deletedAt && (
+                                    <span className="admin-panel__item-deleted-at">
+                                        🗑 Baja: {formatDate(user.deletedAt)}
+                                    </span>
+                                )}
                                 <span className="admin-panel__item-id">ID: {user.id}</span>
                             </div>
 
-                            <button
-                                className="admin-panel__btn admin-panel__btn--delete"
-                                onClick={() => handleDeleteClick(user)}
-                                disabled={deletingUserId === user.id}
-                            >
-                                {deletingUserId === user.id ? 'Eliminando...' : 'Eliminar'}
-                            </button>
+                            <div className="admin-panel__item-actions">
+                                {showInactive ? (
+                                    // Vista inactivos: botón para restaurar
+                                    <button
+                                        className="admin-panel__btn admin-panel__btn--restore"
+                                        onClick={() => handleRestoreClick(user)}
+                                        disabled={restoringUserId === user.id}
+                                    >
+                                        {restoringUserId === user.id ? 'Restaurando...' : '↺ Restaurar'}
+                                    </button>
+                                ) : (
+                                    // Vista activos: botón para eliminar
+                                    <button
+                                        className="admin-panel__btn admin-panel__btn--delete"
+                                        onClick={() => handleDeleteClick(user)}
+                                        disabled={deletingUserId === user.id}
+                                    >
+                                        {deletingUserId === user.id ? 'Eliminando...' : 'Eliminar'}
+                                    </button>
+                                )}
+                            </div>
                         </li>
                     ))}
                 </ul>

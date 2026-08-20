@@ -16,6 +16,7 @@ model User {
   email                             String       @unique(map: "uq_user_email") @db.VarChar(150)
   phone                             String?      @db.VarChar(20)
   avatarUrl                         String?      @db.VarChar(255)
+  birthDate                         DateTime?    @db.Date
   deletedAt                         DateTime?    @db.DateTime(0)
   donation_donation_idDonorTouser   donation[]   @relation("donation_idDonorTouser")
   donation_donation_idGranteeTouser donation[]   @relation("donation_idGranteeTouser")

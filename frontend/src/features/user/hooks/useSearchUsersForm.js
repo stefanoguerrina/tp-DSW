@@ -2,22 +2,28 @@
 import { useState, useEffect } from 'react';
 import { searchUsersService } from '../services/searchUsersService.js';
 import { deleteUserService } from '../services/deleteUserService.js';
+import { restoreUserService } from '../services/restoreUserService.js';
 
 export const useSearchUsersForm = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    // true cuando el panel está mostrando usuarios inactivos (dados de baja).
+    const [showInactive, setShowInactive] = useState(false);
     // ID del usuario que está siendo eliminado en este momento (para mostrar estado de carga por fila).
     const [deletingUserId, setDeletingUserId] = useState(null);
     const [deleteError, setDeleteError] = useState('');
+    // ID del usuario que está siendo restaurado en este momento.
+    const [restoringUserId, setRestoringUserId] = useState(null);
+    const [restoreError, setRestoreError] = useState('');
 
-    // Solicita la lista de usuarios al backend.
-    const fetchUsers = async () => {
+    // Solicita la lista de usuarios al backend (activos o inactivos según showInactive).
+    const fetchUsers = async (inactive = showInactive) => {
         setIsLoading(true);
         setError('');
         try {
-            const data = await searchUsersService();
+            const data = await searchUsersService({ inactive });
             setUsers(data);
         } catch (err) {
             console.error('[useSearchUsersForm] Error al obtener usuarios:', err);
@@ -29,10 +35,18 @@ export const useSearchUsersForm = () => {
 
     // Carga la lista de usuarios cuando el componente se monta.
     useEffect(() => {
-        fetchUsers();
+        fetchUsers(false);
     }, []);
 
     const handleSearchChange = (event) => setSearchTerm(event.target.value);
+
+    // Alterna entre mostrar usuarios activos e inactivos y recarga la lista correspondiente.
+    const handleToggleInactive = () => {
+        const nextInactive = !showInactive;
+        setShowInactive(nextInactive);
+        setSearchTerm('');
+        fetchUsers(nextInactive);
+    };
 
     // Envía la petición de baja lógica y elimina el usuario del estado local al completarse.
     const handleDeleteUser = async (userId) => {
@@ -48,6 +62,28 @@ export const useSearchUsersForm = () => {
         } finally {
             setDeletingUserId(null);
         }
+    };
+
+    // Envía la petición de reactivación y quita al usuario de la lista de inactivos al completarse.
+    const handleRestoreUser = async (userId) => {
+        setRestoreError('');
+        setRestoringUserId(userId);
+        try {
+            await restoreUserService(userId);
+            // Actualización optimista: saca el usuario de la lista de inactivos local.
+            setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
+        } catch (err) {
+            console.error('[useSearchUsersForm] Error al restaurar usuario:', err);
+            setRestoreError(err.message || 'Error al restaurar al usuario.');
+        } finally {
+            setRestoringUserId(null);
+        }
+    };
+
+    // Agrega el nuevo usuario al principio de la lista local cuando el admin lo crea.
+    // Evita un refetch innecesario al servidor.
+    const handleUserCreated = (newUser) => {
+        setUsers((prevUsers) => [newUser, ...prevUsers]);
     };
 
     // Filtra la lista según el término de búsqueda (username, nombre, apellido o email).
@@ -68,10 +104,16 @@ export const useSearchUsersForm = () => {
         totalUsersCount: users.length,
         isLoading,
         error,
+        showInactive,
         deletingUserId,
         deleteError,
+        restoringUserId,
+        restoreError,
         handleSearchChange,
-        handleRefresh: fetchUsers,
-        handleDeleteUser
+        handleRefresh: () => fetchUsers(showInactive),
+        handleToggleInactive,
+        handleDeleteUser,
+        handleRestoreUser,
+        handleUserCreated
     };
 };

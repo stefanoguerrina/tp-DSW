@@ -26,6 +26,10 @@ export const validateRegister = [
     .optional({ nullable: true, checkFalsy: true })
     .trim()
     .isLength({ max: 20 }).withMessage('El teléfono no puede superar los 20 caracteres.'),
+  body('birthDate')
+    .optional({ nullable: true, checkFalsy: true })
+    .isISO8601().withMessage('La fecha de nacimiento debe tener formato YYYY-MM-DD.')
+    .toDate(),
 ];
 
 // Reglas para el login (POST /auth/login).

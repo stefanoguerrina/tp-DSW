@@ -12,6 +12,7 @@ export interface CreateUserData {
   lastName: string;
   email: string;
   phone?: string | null;
+  birthDate?: Date | null;
 }
 
 // Campos que el usuario puede modificar en su perfil.
@@ -20,6 +21,7 @@ export interface UpdateUserData {
   lastName?: string;
   phone?: string | null;
   avatarUrl?: string | null;
+  birthDate?: Date | null;
 }
 
 // Elimina la contraseña de un objeto usuario antes de enviarlo en una respuesta HTTP.
