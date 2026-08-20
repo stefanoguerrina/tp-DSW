@@ -3,6 +3,40 @@
 import { body, param, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 
+// Reglas de validación para el endpoint de creación de usuario por admin (POST /).
+export const validateCreateUser = [
+  body('username')
+    .trim()
+    .notEmpty().withMessage('El nombre de usuario es requerido.')
+    .isLength({ min: 3, max: 50 }).withMessage('El nombre de usuario debe tener entre 3 y 50 caracteres.'),
+  body('password')
+    .notEmpty().withMessage('La contraseña es requerida.')
+    .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres.'),
+  body('name')
+    .trim()
+    .notEmpty().withMessage('El nombre es requerido.')
+    .isLength({ min: 2, max: 100 }).withMessage('El nombre debe tener entre 2 y 100 caracteres.'),
+  body('lastName')
+    .trim()
+    .notEmpty().withMessage('El apellido es requerido.')
+    .isLength({ min: 2, max: 100 }).withMessage('El apellido debe tener entre 2 y 100 caracteres.'),
+  body('email')
+    .trim()
+    .notEmpty().withMessage('El email es requerido.')
+    .isEmail().withMessage('El email no tiene un formato válido.'),
+  body('phone')
+    .optional({ nullable: true, checkFalsy: true })
+    .trim()
+    .isLength({ max: 20 }).withMessage('El teléfono no puede superar los 20 caracteres.'),
+  body('birthDate')
+    .optional({ nullable: true, checkFalsy: true })
+    .isISO8601().withMessage('La fecha de nacimiento debe tener formato YYYY-MM-DD.')
+    .toDate(),
+  body('makeAdmin')
+    .optional()
+    .isBoolean().withMessage('makeAdmin debe ser true o false.'),
+];
+
 // Reglas de validación para el endpoint de actualización de datos del usuario (PATCH /:id).
 // Al menos uno de los campos editables debe estar presente.
 export const validateUpdateUser = [
@@ -29,13 +63,17 @@ export const validateUpdateUser = [
     .trim()
     .isURL()
     .withMessage('La URL del avatar debe ser una URL válida.'),
+  body('birthDate')
+    .optional({ nullable: true, checkFalsy: true })
+    .isISO8601().withMessage('La fecha de nacimiento debe tener formato YYYY-MM-DD.')
+    .toDate(),
   // Verificamos que al menos un campo editable esté presente en el body.
   body()
     .custom((_, { req }) => {
-      const campos = ['name', 'lastName', 'phone', 'avatarUrl'];
+      const campos = ['name', 'lastName', 'phone', 'avatarUrl', 'birthDate'];
       const hayAlguno = campos.some((c) => req.body[c] !== undefined);
       if (!hayAlguno) {
-        throw new Error('Se debe enviar al menos un campo editable: name, lastName, phone o avatarUrl.');
+        throw new Error('Se debe enviar al menos un campo editable: name, lastName, phone, avatarUrl o birthDate.');
       }
       return true;
     }),

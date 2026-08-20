@@ -28,6 +28,7 @@ export const authRepository = {
     lastName: string;
     email: string;
     phone: string | null;
+    birthDate?: Date | null;
   }) => prisma.user.create({ data }),
 
   // Devuelve los IDs de los roles asignados al usuario (usado para detectar admins).

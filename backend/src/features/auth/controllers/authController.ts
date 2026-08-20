@@ -19,10 +19,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const { username, password, name, lastName, email, phone } = req.body;
+  const { username, password, name, lastName, email, phone, birthDate } = req.body;
 
   try {
-    const result = await authService.register({ username, password, name, lastName, email, phone });
+    const result = await authService.register({ username, password, name, lastName, email, phone, birthDate });
 
     if (!result.ok) {
       // Mensajes específicos según la razón del fallo.

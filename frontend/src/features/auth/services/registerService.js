@@ -14,7 +14,8 @@ export const registerService = async (form) => {
             lastName: form.surName,
             email: form.email,
             password: form.password,
-            phone: form.telephone || null
+            phone: form.telephone || null,
+            birthDate: form.birthDate || null
         })
     });
 

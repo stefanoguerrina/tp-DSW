@@ -23,6 +23,7 @@ export async function register(data: {
   lastName: string;
   email: string;
   phone?: string | null;
+  birthDate?: Date | null;
 }): Promise<RegisterResult> {
   const [existingByUsername, existingByEmail] = await Promise.all([
     authRepository.findByUsername(data.username),
@@ -41,6 +42,7 @@ export async function register(data: {
     lastName: data.lastName.trim(),
     email: data.email.trim(),
     phone: data.phone?.trim() ?? null,
+    birthDate: data.birthDate ?? null,
   });
 
   return { ok: true, user: toPublic(user) };

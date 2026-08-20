@@ -4,6 +4,7 @@ import { useRegisterForm } from "../hooks/useRegisterForm";
 const RegisterForm = ({ onClose, onRegisterSubmit }) => {
     const {
         form,
+        isLoading,
         errorOfEmptyFields,
         errorOfRegister,
         handleInputChange,
@@ -84,6 +85,17 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                         />
                     </div>
 
+                    <div className="registerForm__label">
+                        <label className="registerFormInputLabel">Fecha de nacimiento (opcional)</label>
+                        <input
+                            className="registerFormInput"
+                            type="date"
+                            value={form.birthDate}
+                            onChange={(event) => handleInputChange(event, "birthDate")}
+                            id="registerBirthDate"
+                        />
+                    </div>
+
                     {errorOfEmptyFields && (
                         <p className="ErrorText">Por favor, completá todos los campos requeridos.</p>
                     )}
@@ -93,7 +105,9 @@ const RegisterForm = ({ onClose, onRegisterSubmit }) => {
                     )}
 
                     <div className='registerForm-action'>
-                        <button type="submit">Registrarse</button>
+                        <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Registrando...' : 'Registrarse'}
+                        </button>
                     </div>
                 </>
             </form>

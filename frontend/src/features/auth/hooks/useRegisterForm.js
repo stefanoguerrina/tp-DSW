@@ -10,6 +10,8 @@ export const useRegisterForm = ({ onClose, onRegisterSubmit }) => {
     const [errorOfEmptyFields, setErrorOfEmptyFields] = useState(false);
     // Mensaje de error devuelto por el backend (ej: usuario o email ya en uso).
     const [errorOfRegister, setErrorOfRegister] = useState("");
+    // Evita doble submit mientras se espera la respuesta del servidor.
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleInputChange = (event, attr) => {
         setErrorOfEmptyFields(false);
@@ -20,12 +22,16 @@ export const useRegisterForm = ({ onClose, onRegisterSubmit }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        // Previene el doble submit si ya hay una petición en curso.
+        if (isLoading) return;
+
         if (checkEmptyFields(form)) {
             setErrorOfEmptyFields(true);
             return;
         }
         setErrorOfEmptyFields(false);
 
+        setIsLoading(true);
         try {
             const backendResponse = await registerService(form);
             onRegisterSubmit(backendResponse);
@@ -34,8 +40,10 @@ export const useRegisterForm = ({ onClose, onRegisterSubmit }) => {
         } catch (error) {
             // Muestra el mensaje de error del backend si está disponible.
             setErrorOfRegister(error.message || "Error al registrarse. Intentá de nuevo.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    return { form, errorOfEmptyFields, errorOfRegister, handleInputChange, handleSubmit };
+    return { form, isLoading, errorOfEmptyFields, errorOfRegister, handleInputChange, handleSubmit };
 };

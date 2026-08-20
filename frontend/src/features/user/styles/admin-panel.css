@@ -99,6 +99,74 @@
     color: #fff;
 }
 
+.admin-panel__btn--restore {
+    background: transparent;
+    border-color: #1e88e5;
+    color: #1e88e5;
+    font-size: 13px;
+    padding: 7px 14px;
+    flex-shrink: 0;
+}
+
+.admin-panel__btn--restore:hover:not(:disabled) {
+    background: #1e88e5;
+    color: #fff;
+}
+
+.admin-panel__btn--toggle-inactive {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.admin-panel__btn--toggle-inactive:hover:not(:disabled) {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+}
+
+.admin-panel__btn--toggle-active {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.admin-panel__btn--toggle-active:hover:not(:disabled) {
+    opacity: 0.88;
+}
+
+.admin-panel__btn--new {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    white-space: nowrap;
+}
+
+.admin-panel__btn--new:hover:not(:disabled) {
+    opacity: 0.88;
+}
+
+.admin-panel__btn--create {
+    background: #43a047;
+    border-color: #43a047;
+    color: #fff;
+}
+
+.admin-panel__btn--create:hover:not(:disabled) {
+    opacity: 0.88;
+}
+
+.admin-panel__btn--cancel {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.admin-panel__btn--cancel:hover:not(:disabled) {
+    background: var(--accent-bg);
+}
+
 /* ---- Alerts ---- */
 .admin-panel__alert {
     padding: 12px 16px;
@@ -111,6 +179,12 @@
     background: rgba(229, 57, 53, 0.1);
     border: 1px solid rgba(229, 57, 53, 0.4);
     color: #c62828;
+}
+
+.admin-panel__alert--success {
+    background: rgba(67, 160, 71, 0.1);
+    border: 1px solid rgba(67, 160, 71, 0.4);
+    color: #2e7d32;
 }
 
 /* ---- State messages ---- */
@@ -148,6 +222,22 @@
     border-color: var(--accent-border);
 }
 
+/* Items de usuarios inactivos: borde punteado y opacidad reducida para diferenciarlos */
+.admin-panel__item--inactive {
+    opacity: 0.75;
+    border-style: dashed;
+}
+
+.admin-panel__item--inactive:hover {
+    opacity: 1;
+    border-color: #1e88e5;
+}
+
+/* Contenedor del botón de acción (eliminar o restaurar) */
+.admin-panel__item-actions {
+    flex-shrink: 0;
+}
+
 .admin-panel__item-info {
     display: flex;
     flex-wrap: wrap;
@@ -169,9 +259,16 @@
 }
 
 .admin-panel__item-email,
-.admin-panel__item-phone {
+.admin-panel__item-phone,
+.admin-panel__item-birthdate {
     font-size: 13px;
     color: var(--text);
+}
+
+.admin-panel__item-deleted-at {
+    font-size: 12px;
+    color: #c62828;
+    font-style: italic;
 }
 
 .admin-panel__item-id {
@@ -183,6 +280,93 @@
     font-family: var(--mono);
 }
 
+/* ---- Create user form ---- */
+.admin-panel__create-form {
+    border: 1px solid var(--accent-border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    background: var(--accent-bg);
+}
+
+.admin-panel__create-form-title {
+    margin: 0 0 16px;
+    font-size: 17px;
+    color: var(--text-h);
+}
+
+.admin-panel__form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.admin-panel__form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.admin-panel__form-group label {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.admin-panel__input {
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-h);
+    font-size: 14px;
+    font-family: var(--sans);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-panel__input:focus {
+    border-color: var(--accent);
+}
+
+.admin-panel__form-group--checkbox {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.admin-panel__checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-h);
+    cursor: pointer;
+    user-select: none;
+}
+
+.admin-panel__checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.admin-panel__form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.admin-panel__form-hint {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--text);
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 576px) {
     .admin-panel__item {
@@ -192,5 +376,13 @@
 
     .admin-panel__btn--delete {
         width: 100%;
+    }
+
+    .admin-panel__form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-panel__form-actions {
+        flex-direction: column;
     }
 }
