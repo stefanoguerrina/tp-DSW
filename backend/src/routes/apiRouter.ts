@@ -3,6 +3,8 @@ import { Router } from 'express';
 import { authRouter } from '../features/auth/routes/authRouter.js';
 import { userRouter } from '../features/user/routes/userRouter.js';
 import { databaseRouter } from '../features/database/routes/databaseRouter.js'
+import { ingredientCategoryRouter } from '../features/ingredientCategory/routes/ingredientCategoryRouter.js';
+import { ingredientRouter } from '../features/ingredient/routes/ingredientRouter.js';
 
 const apiRouter = Router();
 
@@ -13,5 +15,9 @@ apiRouter.use('/database', databaseRouter);
 apiRouter.use('/auth', authRouter);
 
 apiRouter.use('/users', userRouter);
+
+// Ingredient routes (incluye, anidado, el CRUD de valores nutricionales)
+apiRouter.use('/ingredient-categories', ingredientCategoryRouter);
+apiRouter.use('/ingredients', ingredientRouter);
 
 export { apiRouter };
