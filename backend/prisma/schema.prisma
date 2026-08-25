@@ -72,25 +72,34 @@ model image {
 }
 
 model ingredient {
-  id                   Int                @id @default(autoincrement())
-  idIngredientCategory Int
-  name                 String             @db.VarChar(100)
-  description          String?            @db.VarChar(255)
-  unitOfMeasure        String?            @db.VarChar(20)
-  imagePath            String?            @db.VarChar(255)
-  ingredientcategory   ingredientcategory @relation(fields: [idIngredientCategory], references: [id], map: "fk_ingredient_category")
-  inventory            inventory[]
-  nutritionalvalue     nutritionalvalue[]
-  recipeingredient     recipeingredient[]
-
-  @@index([idIngredientCategory], map: "fk_ingredient_category")
+  id                            Int                             @id @default(autoincrement())
+  name                          String                          @db.VarChar(100)
+  description                   String?                         @db.VarChar(255)
+  unitOfMeasure                 String?                         @db.VarChar(20)
+  imagePath                     String?                         @db.VarChar(255)
+  ingredientcategoryingredient  ingredientcategoryingredient[]
+  inventory                     inventory[]
+  nutritionalvalue              nutritionalvalue[]
+  recipeingredient              recipeingredient[]
 }
 
 model ingredientcategory {
-  id          Int          @id @default(autoincrement())
-  name        String       @db.VarChar(100)
-  description String?      @db.VarChar(255)
-  ingredient  ingredient[]
+  id                            Int                             @id @default(autoincrement())
+  name                          String                          @db.VarChar(100)
+  description                   String?                         @db.VarChar(255)
+  ingredientcategoryingredient  ingredientcategoryingredient[]
+}
+
+// Tabla intermedia N:M — un ingrediente puede tener varias categorías,
+// y una categoría puede agrupar varios ingredientes.
+model ingredientcategoryingredient {
+  idIngredientCategory Int
+  idIngredient         Int
+  ingredientcategory   ingredientcategory @relation(fields: [idIngredientCategory], references: [id], onDelete: Cascade, map: "fk_ici_category")
+  ingredient           ingredient         @relation(fields: [idIngredient], references: [id], onDelete: Cascade, map: "fk_ici_ingredient")
+
+  @@id([idIngredientCategory, idIngredient])
+  @@index([idIngredient], map: "fk_ici_ingredient")
 }
 
 model inventory {
