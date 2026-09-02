@@ -1,7 +1,9 @@
-// Componente del formulario de inicio de sesión.
+// Modal del formulario de inicio de sesión.
+import { useState } from "react";
 import { useLoginForm } from "../hooks/useLoginForm";
+import "../styles/_auth-modal.scss";
 
-const LoginForm = ({ onClose, onLoginSession }) => {
+const LoginForm = ({ onClose, onLoginSession, onSwitchToRegister }) => {
     const {
         form,
         errorOfEmptyFields,
@@ -10,21 +12,39 @@ const LoginForm = ({ onClose, onLoginSession }) => {
         handleSubmit
     } = useLoginForm({ onClose, onLoginSession });
 
-    return (
-        <div className="formLogin-overlay">
-            <form className="loginform" onSubmit={handleSubmit}>
+    // Estado puramente visual: si la contraseña se muestra en texto plano o no.
+    const [showPassword, setShowPassword] = useState(false);
+    const handleToggleShowPassword = () => setShowPassword((prev) => !prev);
 
+    return (
+        <div className="AuthModal-overlay" onClick={onClose}>
+            <div
+                className="AuthModal-card"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="login-modal-title"
+                onClick={(event) => event.stopPropagation()}
+            >
                 <button
                     type="button"
-                    className="closeButton"
+                    className="AuthModal-closeButton"
+                    aria-label="Cerrar"
                     onClick={onClose}
                 >
-                    ✕
+                    <span className="material-symbols-outlined">close</span>
                 </button>
 
-                <div className="loginForm__label">
+                <div className="AuthModal-header">
+                    <div className="AuthModal-icon">
+                        <span className="material-symbols-outlined">restaurant_menu</span>
+                    </div>
+                    <h2 className="AuthModal-title" id="login-modal-title">¡Hola de nuevo!</h2>
+                    <p className="AuthModal-subtitle">Ingresá para seguir cocinando tu vida.</p>
+                </div>
+
+                <form className="AuthModal-form" onSubmit={handleSubmit}>
                     <input
-                        className="formLoginNameInput"
+                        className="AuthModal-input"
                         type="text"
                         id="emailLogIn"
                         name="emailLogIn"
@@ -33,37 +53,56 @@ const LoginForm = ({ onClose, onLoginSession }) => {
                         value={form.email}
                         onChange={(event) => handleInputChange(event, "email")}
                     />
-                </div>
 
-                <div className="loginForm__label">
-                    <input
-                        className="formLoginPasswordInput"
-                        placeholder="Contraseña"
-                        type="password"
-                        id="passwordLogIn"
-                        name="passwordLogIn"
-                        autoComplete="off"
-                        value={form.password}
-                        onChange={(event) => handleInputChange(event, "password")}
-                    />
-                </div>
+                    <div className="AuthModal-passwordWrapper">
+                        <input
+                            className="AuthModal-input"
+                            placeholder="Contraseña"
+                            type={showPassword ? "text" : "password"}
+                            id="passwordLogIn"
+                            name="passwordLogIn"
+                            autoComplete="off"
+                            value={form.password}
+                            onChange={(event) => handleInputChange(event, "password")}
+                        />
+                        <button
+                            type="button"
+                            className="AuthModal-toggleVisibility"
+                            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            onClick={handleToggleShowPassword}
+                        >
+                            <span className="material-symbols-outlined">
+                                {showPassword ? "visibility_off" : "visibility"}
+                            </span>
+                        </button>
+                    </div>
 
-                <div className="loginForm-action">
-                    <button type="submit">Iniciar sesión</button>
-                </div>
+                    {errorOfEmptyFields && (
+                        <p className="AuthModal-error">Debés completar todos los campos.</p>
+                    )}
 
-                {errorOfEmptyFields && (
-                    <p className="ErrorText">
-                        Debés completar todos los campos.
+                    {errorOfData && (
+                        <p className="AuthModal-error">
+                            {typeof errorOfData === 'string' ? errorOfData : 'Email o contraseña incorrectos.'}
+                        </p>
+                    )}
+
+                    <button type="submit" className="AuthModal-submit">Ingresar</button>
+                </form>
+
+                <div className="AuthModal-footer">
+                    <p>
+                        ¿No tenés una cuenta?{' '}
+                        <button type="button" className="AuthModal-switchButton" onClick={onSwitchToRegister}>
+                            Registrate
+                        </button>
                     </p>
-                )}
-
-                {errorOfData && (
-                    <p className="ErrorText">
-                        {typeof errorOfData === 'string' ? errorOfData : 'Email o contraseña incorrectos.'}
+                    <p className="AuthModal-legal">
+                        Al continuar, aceptás las <a href="#">Condiciones del servicio</a> de Chefcito y confirmás
+                        que leíste nuestra <a href="#">Política de privacidad</a>.
                     </p>
-                )}
-            </form>
+                </div>
+            </div>
         </div>
     );
 };

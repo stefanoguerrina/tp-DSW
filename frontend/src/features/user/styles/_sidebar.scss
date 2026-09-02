@@ -1,0 +1,112 @@
+// Estilos de la sidebar fija de las páginas autenticadas (features/user/components/Sidebar).
+@use '../../../styles/abstracts' as *;
+
+.Sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: $layout-sidebar-width;
+  background: $color-surface-container-low;
+  border-right: 1px solid $color-outline-variant;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-md 0;
+  z-index: 50;
+
+  &-logo {
+    color: $color-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-full;
+    margin-bottom: $spacing-xl;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+
+    .material-symbols-outlined {
+      font-size: 32px;
+      font-variation-settings: 'FILL' 1;
+    }
+
+    &:hover {
+      background: $color-surface-container-highest;
+    }
+  }
+
+  &-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-lg;
+    width: 100%;
+  }
+
+  &-link {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: $radius-full;
+    background: transparent;
+    color: $color-on-surface-variant;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+    }
+
+    &:hover {
+      background: $color-surface-container-highest;
+    }
+
+    &--active {
+      background: $color-secondary-container;
+      color: $color-on-secondary-container;
+
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1;
+      }
+
+      &:hover {
+        background: $color-secondary-container;
+      }
+    }
+  }
+
+  // Tooltip que aparece a la derecha del ícono al pasar el mouse (oculto en mobile,
+  // donde tocar el ícono navega directo en vez de mostrar texto flotante).
+  &-tooltip {
+    display: none;
+
+    @include respond-to(md) {
+      display: block;
+      position: absolute;
+      left: 100%;
+      margin-left: $spacing-sm;
+      padding: $spacing-xs $spacing-sm;
+      background: $color-inverse-surface;
+      color: $color-inverse-on-surface;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: $radius-md;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      z-index: 50;
+    }
+  }
+
+  &-link:hover &-tooltip {
+    opacity: 1;
+  }
+}

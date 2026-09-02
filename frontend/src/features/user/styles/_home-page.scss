@@ -1,0 +1,54 @@
+// Estilos de contenedor general de la home (features/user/pages/HomePage).
+@use '../../../styles/abstracts' as *;
+
+// #root en index.css trae un ancho fijo de 1126px + borde + texto centrado, pensado
+// para el layout angosto del scaffold original. La home necesita ancho completo (tiene
+// una sidebar fija a la izquierda): se lo pisa solo cuando el root la contiene, igual
+// que hace la landing con #root:has(.LandingPage) en _landing-page.scss.
+#root:has(.HomePage) {
+  width: 100%;
+  border-inline: none;
+  text-align: initial;
+}
+
+.HomePage {
+  font-family: $font-body;
+  background: $color-background;
+  color: $color-on-background;
+  min-height: 100vh;
+  display: flex;
+
+  &-content {
+    flex: 1;
+    min-width: 0;
+    margin-left: $layout-sidebar-width;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  &-main {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing-xl $spacing-gutter-mobile 96px;
+
+    @include respond-to(lg) {
+      padding: $spacing-xl $spacing-gutter-desktop 96px;
+    }
+  }
+
+  &-subtitle {
+    text-align: center;
+    color: $color-on-surface-variant;
+    font-size: 18px;
+    margin: $spacing-xl 0;
+  }
+
+  &-divider {
+    border: none;
+    border-top: 1px solid $color-outline-variant;
+    margin: 0 0 $spacing-xl;
+  }
+}

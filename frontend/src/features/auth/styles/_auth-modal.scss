@@ -1,0 +1,248 @@
+// Estilos compartidos por LoginForm y RegisterForm: overlay + tarjeta de modal.
+// Ambos componentes usan las mismas clases "AuthModal-*" para no duplicar CSS.
+@use '../../../styles/abstracts' as *;
+
+.AuthModal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: $spacing-lg;
+}
+
+.AuthModal-card {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: $color-surface-container-lowest;
+  border: 1px solid $color-outline-variant;
+  border-radius: 24px;
+  box-shadow: $shadow-level-2;
+  padding: $spacing-xl $spacing-lg;
+
+  @include respond-to(md) {
+    padding: 40px $spacing-xl;
+  }
+}
+
+.AuthModal-closeButton {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: $radius-full;
+  background: transparent;
+  color: $color-on-surface-variant;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: $color-surface-container-high;
+  }
+}
+
+.AuthModal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+}
+
+.AuthModal-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  background: $color-primary;
+  color: $color-on-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+}
+
+.AuthModal-title {
+  font-family: $font-headline;
+  font-size: 28px;
+  color: $color-on-background;
+  margin: 0 0 $spacing-xs;
+}
+
+.AuthModal-subtitle {
+  font-family: $font-body;
+  font-size: 14px;
+  color: $color-on-surface-variant;
+  margin: 0;
+}
+
+.AuthModal-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.AuthModal-row {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  @include respond-to(sm) {
+    flex-direction: row;
+
+    .AuthModal-field {
+      flex: 1;
+    }
+  }
+}
+
+.AuthModal-input {
+  width: 100%;
+  border: 1px solid $color-outline-variant;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  font-family: $font-body;
+  font-size: 14px;
+  color: $color-on-background;
+  background: $color-surface;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $color-on-surface-variant;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+  }
+}
+
+.AuthModal-passwordWrapper {
+  position: relative;
+
+  .AuthModal-input {
+    padding-right: 44px;
+  }
+}
+
+.AuthModal-toggleVisibility {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 44px;
+  border: none;
+  background: transparent;
+  color: $color-on-surface-variant;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-on-background;
+  }
+}
+
+.AuthModal-hint {
+  font-size: 11px;
+  color: $color-on-surface-variant;
+  margin: -#{$spacing-sm} 0 0 $spacing-xs;
+}
+
+.AuthModal-error {
+  font-size: 13px;
+  color: $color-error;
+  margin: 0;
+}
+
+.AuthModal-submit {
+  width: 100%;
+  background: $color-primary;
+  color: $color-on-primary;
+  border: none;
+  font-family: $font-body;
+  font-weight: 600;
+  padding: $spacing-md;
+  border-radius: $radius-full;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: $spacing-xs;
+
+  &:hover {
+    background: $color-primary-container;
+  }
+}
+
+.AuthModal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.AuthModal-outlineButton {
+  width: 100%;
+  background: transparent;
+  color: $color-primary;
+  border: 2px solid $color-primary;
+  font-family: $font-body;
+  font-weight: 600;
+  padding: calc(#{$spacing-md} - 2px);
+  border-radius: $radius-full;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-on-primary;
+  }
+}
+
+.AuthModal-footer {
+  text-align: center;
+  font-size: 14px;
+  color: $color-on-background;
+  margin-top: $spacing-xl;
+}
+
+.AuthModal-switchButton {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: $color-on-background;
+  text-decoration: underline;
+  text-decoration-color: $color-primary;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.AuthModal-legal {
+  font-size: 11px;
+  color: $color-on-surface-variant;
+  line-height: 1.5;
+  max-width: 90%;
+  margin: $spacing-md auto 0;
+  text-align: center;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-on-background;
+    }
+  }
+}

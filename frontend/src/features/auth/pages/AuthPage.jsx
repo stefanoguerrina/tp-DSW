@@ -1,7 +1,9 @@
 // Authentication page component managing login and register forms.
 import { useAuth } from "../hooks/useAuth"
+import LandingPage from "../components/landing/LandingPage.jsx";
 import LoginForm from "../components/LoginForm.jsx";
 import RegisterForm from "../components/RegisterForm.jsx";
+import AuthGateModal from "../components/AuthGateModal.jsx";
 
 
 const AuthPage = ({ onLoginSuccess }) => {
@@ -9,34 +11,49 @@ const AuthPage = ({ onLoginSuccess }) => {
     const {
         showLoginForm,
         showRegisterForm,
+        showAuthGate,
         handleShowLoginForm,
         handleHideLoginForm,
         handleLoginSessionSubmit,
         handleRegisterForm,
         handleHideRegisterForm,
-        handleRegisterSubmit
+        handleRegisterSubmit,
+        handleSwitchToRegister,
+        handleSwitchToLogin,
+        handleShowAuthGate,
+        handleHideAuthGate,
+        handleAuthGateLogin,
+        handleAuthGateRegister
     } = useAuth({ onLoginSuccess });
 
     return (
         <div className="App">
 
-            <div className="PresentationPage">
-                <h1>Bienvenido a Chefcito</h1>
-                <p>La aplicación que soluciona tus recetas</p>
-            </div>
-            <button onClick={handleShowLoginForm}>Comenzar con Chefcito</button>
-            <button onClick={handleRegisterForm}>Comenzar registro</button>
+            <LandingPage
+                onLoginClick={handleShowLoginForm}
+                onRegisterClick={handleRegisterForm}
+                onRequireAuth={handleShowAuthGate}
+            />
 
+            {showAuthGate && (
+                <AuthGateModal
+                    onClose={handleHideAuthGate}
+                    onLoginClick={handleAuthGateLogin}
+                    onRegisterClick={handleAuthGateRegister}
+                />
+            )}
             {showLoginForm && (
                 <LoginForm
                     onClose={handleHideLoginForm}
                     onLoginSession={handleLoginSessionSubmit}
+                    onSwitchToRegister={handleSwitchToRegister}
                 />
             )}
             {showRegisterForm && (
                 <RegisterForm
                     onClose={handleHideRegisterForm}
                     onRegisterSubmit={handleRegisterSubmit}
+                    onSwitchToLogin={handleSwitchToLogin}
                 />
             )}
         </div>
