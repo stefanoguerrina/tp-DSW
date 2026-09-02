@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { authRouter } from '../features/auth/routes/authRouter.js';
 import { userRouter } from '../features/user/routes/userRouter.js';
+import { categoryRouter } from '../features/category/routes/categoryRouter.js';
 import { databaseRouter } from '../features/database/routes/databaseRouter.js'
 
 const apiRouter = Router();
@@ -13,5 +14,7 @@ apiRouter.use('/database', databaseRouter);
 apiRouter.use('/auth', authRouter);
 
 apiRouter.use('/users', userRouter);
+
+apiRouter.use('/categories', categoryRouter);
 
 export { apiRouter };
