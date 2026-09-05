@@ -13,6 +13,7 @@ const PENDING_NAV_LINKS = [
 // Paneles de admin disponibles en la sidebar: cada uno tiene un ícono, label e id.
 const ADMIN_NAV_LINKS = [
   { icon: 'manage_accounts', label: 'Usuarios', panel: 'users' },
+  { icon: 'shield_person', label: 'Roles', panel: 'roles' },
   { icon: 'category', label: 'Categorías de ingrediente', panel: 'ingredientCategories' },
   { icon: 'grocery', label: 'Ingredientes', panel: 'ingredients' },
 ];

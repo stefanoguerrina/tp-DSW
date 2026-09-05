@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar.jsx';
 import HomeFeatureCards from '../../recipe/components/HomeFeatureCards.jsx';
 import RecipeCarouselSection from '../../recipe/components/RecipeCarouselSection.jsx';
 import SearchUsersForm from '../components/SearchUsersForm.jsx';
+import RolePage from '../../role/pages/RolePage.jsx';
 import IngredientCategoryPage from '../../ingredientCategory/pages/IngredientCategoryPage.jsx';
 import IngredientPage from '../../ingredient/pages/IngredientPage.jsx';
 import { quickRecipes, trendingRecipes, veganRecipes } from '../../recipe/models/homeMockData.js';
@@ -14,6 +15,7 @@ import '../styles/_home-page.scss';
 // Paneles de admin disponibles. 'null' es la home normal.
 const ADMIN_PANELS = {
   users: 'users',
+  roles: 'roles',
   ingredientCategories: 'ingredientCategories',
   ingredients: 'ingredients',
 };
@@ -40,6 +42,10 @@ function HomePage({ isAdmin }) {
         <main className="HomePage-main">
           {isAdmin && activeAdminPanel === ADMIN_PANELS.users && (
             <SearchUsersForm />
+          )}
+
+          {isAdmin && activeAdminPanel === ADMIN_PANELS.roles && (
+            <RolePage />
           )}
 
           {isAdmin && activeAdminPanel === ADMIN_PANELS.ingredientCategories && (
