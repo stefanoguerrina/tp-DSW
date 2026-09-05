@@ -11,7 +11,7 @@ import '../styles/_recipe-carousel-section.scss';
 // Cuánto se desplaza el carrusel por cada click en una flecha (ancho de card + gap).
 const SCROLL_STEP = 336;
 
-// Recibe: title (encabezado de la sección) y recipes (array, ver recipe/models/homeMockData.js).
+// Recibe: title (encabezado de la sección) y recipes (array, ver recipeToHomeCardProps en recipe/models/recipeModel.js).
 function RecipeCarouselSection({ title, recipes }) {
   // Un mismo ref compartido por los dos hooks: ambos necesitan operar sobre el mismo
   // contenedor (uno escucha el drag del mouse, el otro el scroll para el loop infinito).

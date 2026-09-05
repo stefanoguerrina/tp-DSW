@@ -1,0 +1,77 @@
+// Estilos del panel "Mis recetas" (listado). El wizard de alta/edición vive en
+// _recipe-editor-page.scss. Usa los tokens reales de la identidad de Chefcito
+// (styles/abstracts), no los de placeholder oscuro que quedaron en paneles viejos.
+@use '../../../styles/abstracts' as *;
+
+.RecipePage {
+  padding: $spacing-lg $spacing-xl;
+
+  // Los botones compartidos (.btn, .btn--primary, etc.) viven en
+  // ingredientCategory/styles y usan una paleta placeholder que no es la real
+  // de Chefcito. Acá los pisamos con los tokens correctos, sin tocar ese archivo.
+  .btn {
+    font-family: $font-body;
+    border-radius: $radius-md;
+  }
+
+  .btn--primary {
+    background: $color-primary;
+    color: $color-on-primary;
+    &:hover:not(:disabled) { background: $color-primary-container; opacity: 1; }
+  }
+
+  &-header {
+    display: flex;
+    align-items: baseline;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+
+    h2 {
+      font-family: $font-body;
+      font-size: 24px;
+      font-weight: 700;
+      color: $color-on-surface;
+    }
+  }
+
+  &-count {
+    font-size: 13px;
+    color: $color-on-surface-variant;
+  }
+
+  &-grid {
+    margin-top: $spacing-lg;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: $spacing-xl;
+
+    // RecipeCard ya trae su propio cursor: pointer (pensado para navegar al
+    // detalle de la receta); acá todavía no existe esa página, así que se
+    // desactiva para no prometer una acción que no pasa nada al hacer click.
+    .RecipeCard {
+      cursor: default;
+    }
+  }
+
+  &-alert {
+    background: rgba($color-error, 0.1);
+    color: $color-error;
+    border-radius: $radius-md;
+    padding: $spacing-sm $spacing-md;
+    margin: $spacing-sm 0;
+    font-size: 14px;
+  }
+
+  &-loading,
+  &-empty {
+    color: $color-on-surface-variant;
+    margin-top: $spacing-md;
+    font-size: 14px;
+  }
+
+  &-error {
+    color: $color-error;
+    margin-top: $spacing-md;
+    font-size: 14px;
+  }
+}
