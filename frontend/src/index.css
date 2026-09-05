@@ -54,6 +54,27 @@ body {
   margin: 0;
 }
 
+/* Ícono de Google (Material Symbols): configuración base requerida por la fuente. */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/* Utilidad compartida por useScrollReveal: revela una sección al hacer scroll. */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-animate.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 #root {
   width: 1126px;
   max-width: 100%;

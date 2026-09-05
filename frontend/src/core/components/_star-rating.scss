@@ -1,0 +1,25 @@
+// Estilos del componente compartido StarRating (core/components).
+@use '../../styles/abstracts' as *;
+
+.StarRating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: $color-tertiary-fixed-dim;
+
+  &-icon {
+    font-size: 16px;
+  }
+
+  &-value {
+    font-weight: 700;
+    color: $color-on-surface;
+    margin-left: $spacing-xs;
+  }
+
+  &-count {
+    color: $color-on-surface-variant;
+    font-size: 0.85em;
+    margin-left: 2px;
+  }
+}

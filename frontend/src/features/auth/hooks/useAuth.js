@@ -10,6 +10,8 @@ export const useAuth = ({ onLoginSuccess }) => {
     const [showRegisterForm, setShowRegisterForm] = useState(false);
     // Indica si el último registro fue exitoso (para mostrar feedback al usuario).
     const [registerSucces, setRegisterSucces] = useState(false);
+    // Controla la visibilidad del modal "necesitás una cuenta" (ver handleShowAuthGate).
+    const [showAuthGate, setShowAuthGate] = useState(false);
 
     const handleShowLoginForm = () => setShowLoginForm(true);
     const handleHideLoginForm = () => setShowLoginForm(false);
@@ -36,15 +38,49 @@ export const useAuth = ({ onLoginSuccess }) => {
         handleShowLoginForm();
     };
 
+    // Cierra el modal de login y abre el de registro (link "¿No tenés cuenta? Registrate").
+    const handleSwitchToRegister = () => {
+        handleHideLoginForm();
+        handleRegisterForm();
+    };
+
+    // Cierra el modal de registro y abre el de login (link "¿Ya tenés cuenta? Iniciar sesión").
+    const handleSwitchToLogin = () => {
+        handleHideRegisterForm();
+        handleShowLoginForm();
+    };
+
+    // Muestra el modal "necesitás una cuenta" (se usa cuando un visitante sin loguear
+    // intenta usar una función real de la app, ej. ver una receta o guardarla).
+    const handleShowAuthGate = () => setShowAuthGate(true);
+    const handleHideAuthGate = () => setShowAuthGate(false);
+
+    // Desde el modal de aviso, ir directo a login o a registro.
+    const handleAuthGateLogin = () => {
+        handleHideAuthGate();
+        handleShowLoginForm();
+    };
+    const handleAuthGateRegister = () => {
+        handleHideAuthGate();
+        handleRegisterForm();
+    };
+
     return {
         showLoginForm,
         showRegisterForm,
+        showAuthGate,
         registerSucces,
         handleShowLoginForm,
         handleHideLoginForm,
         handleLoginSessionSubmit,
         handleRegisterForm,
         handleHideRegisterForm,
-        handleRegisterSubmit
+        handleRegisterSubmit,
+        handleSwitchToRegister,
+        handleSwitchToLogin,
+        handleShowAuthGate,
+        handleHideAuthGate,
+        handleAuthGateLogin,
+        handleAuthGateRegister
     };
 };

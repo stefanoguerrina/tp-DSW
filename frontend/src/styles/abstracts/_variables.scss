@@ -1,0 +1,68 @@
+// Variables SASS compartidas: paleta de colores, espaciados y tipografía.
+// Nace de la landing page (features/auth) pero vive en styles/ porque cualquier
+// feature nueva puede necesitar estos mismos tokens.
+
+// --- Colores ---
+// Nombres tomados del esquema Material que usa el diseño de referencia de Chefcito.
+$color-primary: #4b6400;
+$color-primary-container: #617e10;
+$color-on-primary: #ffffff;
+$color-on-primary-container: #fbffe6;
+
+$color-secondary: #2b6a47;
+$color-on-secondary: #ffffff;
+$color-secondary-container: #adefc2;
+$color-on-secondary-container: #306e4b;
+
+$color-tertiary: #765538;
+$color-tertiary-container: #916d4e;
+$color-on-tertiary-container: #fffbff;
+$color-tertiary-fixed-dim: #eabe9a; // usado para estrellas de rating
+
+$color-background: #fff8f1;
+$color-on-background: #1e1b17;
+
+$color-surface: #fff8f1;
+$color-surface-dim: #dfd9d1;
+$color-surface-bright: #fff8f1;
+$color-surface-container-lowest: #ffffff;
+$color-surface-container-low: #f9f3eb;
+$color-surface-container: #f4ede5;
+$color-surface-container-high: #eee7df;
+$color-surface-container-highest: #e8e1da;
+$color-on-surface: #1e1b17;
+$color-on-surface-variant: #59413b;
+
+$color-outline: #8d7169;
+$color-outline-variant: #e1bfb6;
+
+$color-error: #ba1a1a;
+
+$color-inverse-surface: #33302b;
+$color-inverse-on-surface: #f7f0e8;
+
+// --- Espaciados ---
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-gutter-mobile: 16px;
+$spacing-gutter-desktop: 32px;
+
+// --- Tipografía ---
+$font-headline: 'Playfair Display', serif;
+$font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+// --- Bordes y sombras ---
+$radius-md: 0.5rem;
+$radius-lg: 0.75rem;
+$radius-full: 9999px;
+
+$shadow-level-1: 0 4px 12px rgba(31, 27, 22, 0.08);
+$shadow-level-2: 0 8px 24px rgba(31, 27, 22, 0.12);
+
+// --- Layout ---
+// Ancho de la sidebar fija de las páginas autenticadas (features/user). Vive acá porque
+// tanto la sidebar como el contenedor que la compensa (margin-left) necesitan el mismo valor.
+$layout-sidebar-width: 80px;
