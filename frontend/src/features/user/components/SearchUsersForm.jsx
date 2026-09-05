@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSearchUsersForm } from '../hooks/useSearchUsersForm.js';
 import CreateUserForm from './CreateUserForm.jsx';
+import UserRolesPanel from '../../role/components/UserRolesPanel.jsx';
 import '../styles/admin-panel.css';
 
 // Formatea una fecha ISO (YYYY-MM-DD o DateTime) a formato legible DD/MM/AAAA.
@@ -35,6 +36,12 @@ const SearchUsersForm = () => {
 
     // Controla si se muestra el formulario de alta de usuario.
     const [showCreateForm, setShowCreateForm] = useState(false);
+
+    // ID del usuario cuyo panel de roles está expandido (null = ninguno).
+    const [expandedRolesUserId, setExpandedRolesUserId] = useState(null);
+    const handleToggleRoles = (userId) => {
+        setExpandedRolesUserId((prev) => (prev === userId ? null : userId));
+    };
 
     // Pide confirmación antes de eliminar — evita bajas accidentales.
     const handleDeleteClick = (user) => {
@@ -165,7 +172,7 @@ const SearchUsersForm = () => {
                                 <span className="admin-panel__item-id">ID: {user.id}</span>
                             </div>
 
-                            <div className="admin-panel__item-actions">
+                            <div className="admin-panel__item-actions admin-panel__item-actions--group">
                                 {showInactive ? (
                                     // Vista inactivos: botón para restaurar
                                     <button
@@ -176,16 +183,30 @@ const SearchUsersForm = () => {
                                         {restoringUserId === user.id ? 'Restaurando...' : '↺ Restaurar'}
                                     </button>
                                 ) : (
-                                    // Vista activos: botón para eliminar
-                                    <button
-                                        className="admin-panel__btn admin-panel__btn--delete"
-                                        onClick={() => handleDeleteClick(user)}
-                                        disabled={deletingUserId === user.id}
-                                    >
-                                        {deletingUserId === user.id ? 'Eliminando...' : 'Eliminar'}
-                                    </button>
+                                    <>
+                                        {/* Gestión de roles: solo tiene sentido para usuarios activos */}
+                                        <button
+                                            type="button"
+                                            className="admin-panel__btn admin-panel__btn--edit"
+                                            onClick={() => handleToggleRoles(user.id)}
+                                        >
+                                            {expandedRolesUserId === user.id ? 'Ocultar roles' : 'Roles'}
+                                        </button>
+                                        <button
+                                            className="admin-panel__btn admin-panel__btn--delete"
+                                            onClick={() => handleDeleteClick(user)}
+                                            disabled={deletingUserId === user.id}
+                                        >
+                                            {deletingUserId === user.id ? 'Eliminando...' : 'Eliminar'}
+                                        </button>
+                                    </>
                                 )}
                             </div>
+
+                            {/* Panel expandible de roles del usuario */}
+                            {!showInactive && expandedRolesUserId === user.id && (
+                                <UserRolesPanel userId={user.id} username={user.username} />
+                            )}
                         </li>
                     ))}
                 </ul>
