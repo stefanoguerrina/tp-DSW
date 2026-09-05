@@ -6,8 +6,12 @@ import '../styles/_sidebar.scss';
 // Accesos todavía sin feature propia: quedan visibles pero inertes hasta que existan.
 const PENDING_NAV_LINKS = [
   { icon: 'explore', label: 'Explorar' },
-  { icon: 'add_box', label: 'Crear receta' },
   { icon: 'notifications', label: 'Notificaciones' },
+];
+
+// Paneles disponibles para cualquier usuario autenticado (no requieren rol admin).
+const USER_NAV_LINKS = [
+  { icon: 'add_box', label: 'Mis recetas', panel: 'myRecipes' },
 ];
 
 // Paneles de admin disponibles en la sidebar: cada uno tiene un ícono, label e id.
@@ -36,7 +40,21 @@ function Sidebar({ isAdmin, activeAdminPanel, onTogglePanel }) {
           <span className="Sidebar-tooltip">Inicio</span>
         </button>
 
-        {/* TODO: conectar con las futuras features de exploración, creación de recetas y notificaciones. */}
+        {/* Botones de panel propio: cada uno alterna su panel correspondiente (no requieren admin) */}
+        {USER_NAV_LINKS.map((link) => (
+          <button
+            key={link.panel}
+            type="button"
+            className={`Sidebar-link${activeAdminPanel === link.panel ? ' Sidebar-link--active' : ''}`}
+            title={link.label}
+            onClick={() => onTogglePanel(link.panel)}
+          >
+            <span className="material-symbols-outlined">{link.icon}</span>
+            <span className="Sidebar-tooltip">{link.label}</span>
+          </button>
+        ))}
+
+        {/* TODO: conectar con las futuras features de exploración y notificaciones. */}
         {PENDING_NAV_LINKS.map((link) => (
           <button key={link.icon} type="button" className="Sidebar-link" title={link.label}>
             <span className="material-symbols-outlined">{link.icon}</span>

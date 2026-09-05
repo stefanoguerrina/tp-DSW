@@ -1,14 +1,16 @@
 // Home page — vista principal que se muestra tras un login exitoso.
 // Compone el layout autenticado (sidebar fija) y, solo para un admin, permite alternar
 // entre el contenido normal de la home y los paneles de administración.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.jsx';
 import HomeFeatureCards from '../../recipe/components/HomeFeatureCards.jsx';
 import RecipeCarouselSection from '../../recipe/components/RecipeCarouselSection.jsx';
 import SearchUsersForm from '../components/SearchUsersForm.jsx';
 import IngredientCategoryPage from '../../ingredientCategory/pages/IngredientCategoryPage.jsx';
 import IngredientPage from '../../ingredient/pages/IngredientPage.jsx';
-import { quickRecipes, trendingRecipes, veganRecipes } from '../../recipe/models/homeMockData.js';
+import RecipePage from '../../recipe/pages/RecipePage.jsx';
+import { getAllRecipes } from '../../recipe/services/recipeService.js';
+import { recipeToHomeCardProps } from '../../recipe/models/recipeModel.js';
 import '../styles/_home-page.scss';
 
 // Paneles de admin disponibles. 'null' es la home normal.
@@ -18,10 +20,44 @@ const ADMIN_PANELS = {
   ingredients: 'ingredients',
 };
 
+// Paneles disponibles para cualquier usuario autenticado (no requieren rol admin).
+const USER_PANELS = {
+  myRecipes: 'myRecipes',
+};
+
 // Recibe: isAdmin (habilita los paneles de administración en la sidebar).
 function HomePage({ isAdmin }) {
   // Panel admin activo: null = home normal, o una clave de ADMIN_PANELS.
   const [activeAdminPanel, setActiveAdminPanel] = useState(null);
+
+  // Recetas reales cargadas por los usuarios (ya no hay datos de muestra acá).
+  const [communityRecipes, setCommunityRecipes] = useState([]);
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
+  const [recipesError, setRecipesError] = useState('');
+
+  // Se recarga cada vez que se vuelve a la vista normal (activeAdminPanel a
+  // null), no solo al montar: si no, después de crear/editar una receta desde
+  // "Mis recetas" y volver a Inicio, la lista quedaba con los datos viejos.
+  useEffect(() => {
+    if (activeAdminPanel !== null) return;
+    (async () => {
+      setIsLoadingRecipes(true);
+      setRecipesError('');
+      try {
+        const recipes = await getAllRecipes();
+        setCommunityRecipes(recipes.map(recipeToHomeCardProps));
+      } catch (err) {
+        // El backend devuelve 404 cuando todavía no hay ninguna receta cargada.
+        if (err.message.includes('No se encontraron')) {
+          setCommunityRecipes([]);
+        } else {
+          setRecipesError(err.message);
+        }
+      } finally {
+        setIsLoadingRecipes(false);
+      }
+    })();
+  }, [activeAdminPanel]);
 
   // Alterna un panel: si ya está activo lo cierra, si no lo abre.
   const handleTogglePanel = (panel) => {
@@ -50,17 +86,28 @@ function HomePage({ isAdmin }) {
             <IngredientPage />
           )}
 
-          {/* Vista normal de la home cuando no hay panel admin activo */}
-          {(!isAdmin || activeAdminPanel === null) && (
+          {activeAdminPanel === USER_PANELS.myRecipes && (
+            <RecipePage />
+          )}
+
+          {/* Vista normal de la home cuando no hay panel admin ni de usuario activo */}
+          {activeAdminPanel === null && (
             <>
               <HomeFeatureCards />
 
               <p className="HomePage-subtitle">Descubrí nuevas ideas para tu cocina hoy</p>
               <hr className="HomePage-divider" />
 
-              <RecipeCarouselSection title="Recetas en menos de 20 minutos" recipes={quickRecipes} />
-              <RecipeCarouselSection title="Las más usadas de la semana" recipes={trendingRecipes} />
-              <RecipeCarouselSection title="Mejores veganas" recipes={veganRecipes} />
+              {isLoadingRecipes && <p className="HomePage-recipesStatus">Cargando recetas...</p>}
+              {recipesError && <p className="HomePage-recipesStatus">⚠ {recipesError}</p>}
+              {!isLoadingRecipes && !recipesError && communityRecipes.length === 0 && (
+                <p className="HomePage-recipesStatus">
+                  Todavía no hay recetas cargadas. ¡Sé el primero en publicar una desde "Mis recetas"!
+                </p>
+              )}
+              {!isLoadingRecipes && !recipesError && communityRecipes.length > 0 && (
+                <RecipeCarouselSection title="Recetas de la comunidad" recipes={communityRecipes} />
+              )}
             </>
           )}
         </main>

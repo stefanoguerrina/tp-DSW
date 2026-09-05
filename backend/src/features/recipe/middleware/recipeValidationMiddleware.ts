@@ -1,0 +1,89 @@
+// Middlewares de validación para las rutas de receta, usando express-validator.
+// Se ejecutan antes del controller para rechazar datos inválidos con mensajes claros.
+import { body, validationResult } from 'express-validator';
+import { Request, Response, NextFunction } from 'express';
+import { RECIPE_DIFFICULTIES } from '../models/recipeModel.js';
+
+// Reglas de validación para crear una receta (POST /).
+export const validateCreateRecipe = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('El nombre es requerido.')
+    .isLength({ min: 2, max: 150 })
+    .withMessage('El nombre debe tener entre 2 y 150 caracteres.'),
+  body('description')
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 2000 })
+    .withMessage('La descripción no puede superar los 2000 caracteres.'),
+  body('preparationTime')
+    .optional({ nullable: true })
+    .isInt({ min: 1 })
+    .withMessage('El tiempo de preparación debe ser un número entero positivo (en minutos).'),
+  body('difficulty')
+    .optional({ nullable: true })
+    .isIn(RECIPE_DIFFICULTIES)
+    .withMessage(`La dificultad debe ser una de: ${RECIPE_DIFFICULTIES.join(', ')}.`),
+  body('categoryIds')
+    .optional()
+    .isArray()
+    .withMessage('categoryIds debe ser un array de IDs de categoría.'),
+  body('categoryIds.*')
+    .isInt({ min: 1 })
+    .withMessage('Cada categoryId debe ser un número entero positivo.'),
+];
+
+// Reglas de validación para actualizar una receta (PATCH /:id).
+// Al menos uno de los campos editables debe estar presente.
+export const validateUpdateRecipe = [
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 150 })
+    .withMessage('El nombre debe tener entre 2 y 150 caracteres.'),
+  body('description')
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 2000 })
+    .withMessage('La descripción no puede superar los 2000 caracteres.'),
+  body('preparationTime')
+    .optional({ nullable: true })
+    .isInt({ min: 1 })
+    .withMessage('El tiempo de preparación debe ser un número entero positivo (en minutos).'),
+  body('difficulty')
+    .optional({ nullable: true })
+    .isIn(RECIPE_DIFFICULTIES)
+    .withMessage(`La dificultad debe ser una de: ${RECIPE_DIFFICULTIES.join(', ')}.`),
+  body('categoryIds')
+    .optional()
+    .isArray()
+    .withMessage('categoryIds debe ser un array de IDs de categoría.'),
+  body('categoryIds.*')
+    .isInt({ min: 1 })
+    .withMessage('Cada categoryId debe ser un número entero positivo.'),
+  // Verificamos que al menos un campo editable esté presente en el body.
+  body()
+    .custom((_, { req }) => {
+      const campos = ['name', 'description', 'preparationTime', 'difficulty', 'categoryIds'];
+      const hayAlguno = campos.some((c) => req.body[c] !== undefined);
+      if (!hayAlguno) {
+        throw new Error('Se debe enviar al menos un campo editable.');
+      }
+      return true;
+    }),
+];
+
+// Middleware que lee los errores de express-validator y responde 422 si los hay.
+// Se debe usar después de las reglas de validación en el router.
+export const handleValidationErrors = (req: Request, res: Response, next: NextFunction): void => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(422).json({
+      message: 'Error de validación. Revisá los campos enviados.',
+      errors: errors.array().map((e) => ({ campo: e.type === 'field' ? (e as any).path : 'general', mensaje: e.msg })),
+    });
+    return;
+  }
+  next();
+};

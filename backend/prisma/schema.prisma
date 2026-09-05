@@ -64,7 +64,10 @@ model donation {
 model image {
   idRecipe Int
   id       Int
-  imageUrl String   @db.VarChar(255)
+  // LongText en vez de VarChar(255): todavía no hay almacenamiento de archivos
+  // (bucket/disco) en el proyecto, así que por ahora se guarda acá la imagen
+  // como data URL (base64). LongText soporta hasta 4GB, de sobra para eso.
+  imageUrl String   @db.LongText
   isMain   Boolean? @default(false)
   recipe   recipe   @relation(fields: [idRecipe], references: [id], onDelete: Cascade, map: "fk_image_recipe")
 
@@ -132,6 +135,7 @@ model recipe {
   name             String             @db.VarChar(150)
   description      String?            @db.Text
   preparationTime  Int?
+  difficulty       String?            @db.VarChar(20)
   createdAt        DateTime?          @default(now()) @db.DateTime(0)
   saveCount        Int?               @default(0)
   image            image[]

@@ -20,7 +20,10 @@ const ALLOWED_ORIGINS = [
   'http://127.0.0.1:5174'
 ];
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
-app.use(express.json());
+// Límite subido de 100kb (default de Express) a 10mb: las imágenes de receta
+// todavía se envían como data URL en el body (no hay almacenamiento de
+// archivos propio), y una foto de unos pocos MB en base64 supera el default.
+app.use(express.json({ limit: '10mb' }));
 
 app.get("/", (req, res) => {
     res.send("You reached the App!");
