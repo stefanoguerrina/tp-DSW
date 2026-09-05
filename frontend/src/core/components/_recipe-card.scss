@@ -2,7 +2,7 @@
 @use '../../styles/abstracts' as *;
 
 .RecipeCard {
-  background: $color-surface;
+  background: $color-surface-container-lowest;
   border: 1px solid $color-surface-container-highest;
   border-radius: $radius-lg;
   overflow: hidden;
@@ -114,5 +114,43 @@
     height: 4px;
     border-radius: $radius-full;
     background: $color-outline-variant;
+  }
+
+  // Barra de acciones de administración, integrada a la card (solo se renderiza
+  // cuando se pasan onEdit/onDelete, ej. en el panel "Mis recetas").
+  &-manageActions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-xs;
+  }
+
+  &-manageButton {
+    flex: 1;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-md;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &--edit {
+      border: 1px solid $color-outline-variant;
+      background: $color-surface-container-lowest;
+      color: $color-on-surface;
+
+      &:hover {
+        background: $color-surface-container-low;
+      }
+    }
+
+    &--delete {
+      border: none;
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+
+      &:hover {
+        background: rgba($color-error, 0.18);
+      }
+    }
   }
 }

@@ -7,6 +7,7 @@ import { databaseRouter } from '../features/database/routes/databaseRouter.js'
 import { ingredientCategoryRouter } from '../features/ingredientCategory/routes/ingredientCategoryRouter.js';
 import { ingredientRouter } from '../features/ingredient/routes/ingredientRouter.js';
 import { roleRouter } from '../features/rol/routes/roleRouter.js';
+import { recipeRouter } from '../features/recipe/routes/recipeRouter.js';
 
 const apiRouter = Router();
 
@@ -25,5 +26,8 @@ apiRouter.use('/roles', roleRouter);
 // Ingredient routes (incluye, anidado, el CRUD de valores nutricionales)
 apiRouter.use('/ingredient-categories', ingredientCategoryRouter);
 apiRouter.use('/ingredients', ingredientRouter);
+
+// Recipe routes
+apiRouter.use('/recipes', recipeRouter);
 
 export { apiRouter };

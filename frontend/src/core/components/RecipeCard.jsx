@@ -3,10 +3,14 @@
 import StarRating from './StarRating.jsx';
 import './_recipe-card.scss';
 
-// Recibe: recipe (ver landingMockData.createMockRecipe para la forma esperada) y
-// onClick (handler opcional al hacer click en la card). Devuelve la card completa.
-function RecipeCard({ recipe, onClick }) {
+// Recibe: recipe (ver landingMockData.createMockRecipe para la forma esperada),
+// onClick (handler opcional al hacer click en la card) y, opcionalmente, onEdit/
+// onDelete: cuando se pasan (ej. en "Mis recetas"), la card agrega su propia
+// barra de acciones de administración integrada, en vez de dejar esos botones
+// sueltos afuera. Si no se pasan, la card se ve igual que en cualquier otro lado.
+function RecipeCard({ recipe, onClick, onEdit, onDelete }) {
   const { title, author, image, rating, reviewsCount, timeMinutes, difficulty, badge } = recipe;
+  const canManage = Boolean(onEdit || onDelete);
 
   return (
     <article className="RecipeCard" onClick={onClick}>
@@ -41,6 +45,29 @@ function RecipeCard({ recipe, onClick }) {
         </div>
 
         <StarRating rating={rating} reviewsCount={reviewsCount} />
+
+        {canManage && (
+          <div className="RecipeCard-manageActions">
+            {onEdit && (
+              <button
+                type="button"
+                className="RecipeCard-manageButton RecipeCard-manageButton--edit"
+                onClick={(event) => { event.stopPropagation(); onEdit(); }}
+              >
+                Editar
+              </button>
+            )}
+            {onDelete && (
+              <button
+                type="button"
+                className="RecipeCard-manageButton RecipeCard-manageButton--delete"
+                onClick={(event) => { event.stopPropagation(); onDelete(); }}
+              >
+                Eliminar
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </article>
   );

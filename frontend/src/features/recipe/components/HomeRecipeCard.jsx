@@ -3,7 +3,7 @@
 // corta (description) o el tiempo/dificultad + autor, según lo que traiga la receta.
 import '../styles/_home-recipe-card.scss';
 
-// Recibe: recipe (ver features/recipe/models/homeMockData.js). Devuelve la card completa.
+// Recibe: recipe (ver recipeToHomeCardProps en features/recipe/models/recipeModel.js). Devuelve la card completa.
 function HomeRecipeCard({ recipe }) {
   const { title, image, badge, description, time, difficulty, author, authorAvatar } = recipe;
 
