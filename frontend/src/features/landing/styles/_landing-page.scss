@@ -1,0 +1,27 @@
+// Estilos de contenedor general de la landing (features/auth/components/landing/LandingPage).
+@use '../../../styles/abstracts' as *;
+
+// #root en index.css trae un ancho fijo de 1126px + borde + texto centrado, pensado
+// para el layout angosto del resto de la app. La landing necesita ancho completo:
+// se lo pisa solo cuando el root efectivamente contiene la landing (no afecta otras páginas).
+#root:has(.LandingPage) {
+  width: 100%;
+  border-inline: none;
+  text-align: initial;
+}
+
+.LandingPage {
+  font-family: $font-body;
+  background: $color-background;
+  color: $color-on-background;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  main {
+    flex-grow: 1;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+}

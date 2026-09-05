@@ -4,15 +4,23 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // Envía las credenciales al backend y devuelve el JWT en caso de éxito.
 // Si hay errores de validación (422), los lanza como string con los mensajes específicos.
 // Si las credenciales son incorrectas (401), lanza el mensaje del backend.
+// Si el servidor no está disponible (error de red), lanza un mensaje amigable.
 export const loginService = async (form) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            email: form.email,
-            password: form.password
-        })
-    });
+    let response;
+
+    try {
+        response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: form.email,
+                password: form.password
+            })
+        });
+    } catch {
+        // El fetch mismo falló: backend caído, sin red, CORS, URL incorrecta, etc.
+        throw new Error('No se pudo conectar con el servidor. Verificá tu conexión o intentá más tarde.');
+    }
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

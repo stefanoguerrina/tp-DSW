@@ -1,6 +1,6 @@
-// Barra de navegación lateral fija, visible en toda página autenticada (home, y las que
-// se agreguen después). Recibe: isAdmin, showAdminPanel y onToggleAdminPanel — el ícono
-// de configuración solo abre el panel de administración de usuarios para un admin.
+// Barra de navegación lateral fija, visible en toda página autenticada.
+// Para un admin, expone botones de acceso a los distintos paneles de administración.
+// Recibe: isAdmin, activeAdminPanel (panel activo actualmente), onTogglePanel (callback).
 import '../styles/_sidebar.scss';
 
 // Accesos todavía sin feature propia: quedan visibles pero inertes hasta que existan.
@@ -10,7 +10,14 @@ const PENDING_NAV_LINKS = [
   { icon: 'notifications', label: 'Notificaciones' },
 ];
 
-function Sidebar({ isAdmin, showAdminPanel, onToggleAdminPanel }) {
+// Paneles de admin disponibles en la sidebar: cada uno tiene un ícono, label e id.
+const ADMIN_NAV_LINKS = [
+  { icon: 'manage_accounts', label: 'Usuarios', panel: 'users' },
+  { icon: 'category', label: 'Categorías de ingrediente', panel: 'ingredientCategories' },
+  { icon: 'grocery', label: 'Ingredientes', panel: 'ingredients' },
+];
+
+function Sidebar({ isAdmin, activeAdminPanel, onTogglePanel }) {
   return (
     <aside className="Sidebar">
       <a className="Sidebar-logo" href="#top" title="Chefcito">
@@ -18,7 +25,13 @@ function Sidebar({ isAdmin, showAdminPanel, onToggleAdminPanel }) {
       </a>
 
       <nav className="Sidebar-nav">
-        <button type="button" className="Sidebar-link Sidebar-link--active" title="Inicio">
+        {/* Botón de inicio: cierra cualquier panel admin abierto */}
+        <button
+          type="button"
+          className={`Sidebar-link${activeAdminPanel === null ? ' Sidebar-link--active' : ''}`}
+          title="Inicio"
+          onClick={() => onTogglePanel(null)}
+        >
           <span className="material-symbols-outlined">home</span>
           <span className="Sidebar-tooltip">Inicio</span>
         </button>
@@ -36,17 +49,23 @@ function Sidebar({ isAdmin, showAdminPanel, onToggleAdminPanel }) {
           <span className="Sidebar-tooltip">Perfil</span>
         </button>
 
-        <button
-          type="button"
-          className={`Sidebar-link${showAdminPanel ? ' Sidebar-link--active' : ''}`}
-          title={isAdmin ? 'Administración' : 'Configuración'}
-          // Solo un admin puede abrir el panel de administración de usuarios; para el
-          // resto todavía no existe una página de configuración propia.
-          onClick={isAdmin ? onToggleAdminPanel : undefined}
-        >
-          <span className="material-symbols-outlined">settings</span>
-          <span className="Sidebar-tooltip">{isAdmin ? 'Administración' : 'Configuración'}</span>
-        </button>
+        {/* Separador visual antes de los controles de admin */}
+        {isAdmin && <hr className="Sidebar-divider" />}
+
+        {/* Botones de admin: cada uno alterna su panel correspondiente */}
+        {isAdmin &&
+          ADMIN_NAV_LINKS.map((link) => (
+            <button
+              key={link.panel}
+              type="button"
+              className={`Sidebar-link${activeAdminPanel === link.panel ? ' Sidebar-link--active' : ''}`}
+              title={link.label}
+              onClick={() => onTogglePanel(link.panel)}
+            >
+              <span className="material-symbols-outlined">{link.icon}</span>
+              <span className="Sidebar-tooltip">{link.label}</span>
+            </button>
+          ))}
       </nav>
     </aside>
   );

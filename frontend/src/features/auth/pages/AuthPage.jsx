@@ -1,6 +1,6 @@
 // Authentication page component managing login and register forms.
 import { useAuth } from "../hooks/useAuth"
-import LandingPage from "../components/landing/LandingPage.jsx";
+import LandingPage from "../../landing/pages/LandingPage.jsx";
 import LoginForm from "../components/LoginForm.jsx";
 import RegisterForm from "../components/RegisterForm.jsx";
 import AuthGateModal from "../components/AuthGateModal.jsx";

@@ -13,8 +13,13 @@ const PORT = 3000;
 
 // Middleware
 // Orígenes permitidos para CORS: Vite usa 5173 por defecto, 5174 si el puerto ya está ocupado.
-const ALLOWED_ORIGINS = ['http://localhost:5173', 'http://localhost:5174'];
-app.use(cors({ origin: ALLOWED_ORIGINS }));
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5174'
+];
+app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json());
 
 app.get("/", (req, res) => {

@@ -1,29 +1,57 @@
 // Home page — vista principal que se muestra tras un login exitoso.
 // Compone el layout autenticado (sidebar fija) y, solo para un admin, permite alternar
-// entre el contenido normal de la home y el panel de administración de usuarios.
+// entre el contenido normal de la home y los paneles de administración.
 import { useState } from 'react';
 import Sidebar from '../components/Sidebar.jsx';
-import HomeFeatureCards from '../components/HomeFeatureCards.jsx';
-import RecipeCarouselSection from '../components/RecipeCarouselSection.jsx';
+import HomeFeatureCards from '../../recipe/components/HomeFeatureCards.jsx';
+import RecipeCarouselSection from '../../recipe/components/RecipeCarouselSection.jsx';
 import SearchUsersForm from '../components/SearchUsersForm.jsx';
-import { quickRecipes, trendingRecipes, veganRecipes } from '../models/homeMockData.js';
+import IngredientCategoryPage from '../../ingredientCategory/pages/IngredientCategoryPage.jsx';
+import IngredientPage from '../../ingredient/pages/IngredientPage.jsx';
+import { quickRecipes, trendingRecipes, veganRecipes } from '../../recipe/models/homeMockData.js';
 import '../styles/_home-page.scss';
 
-// Recibe: isAdmin (habilita el panel de administración de usuarios en la sidebar).
+// Paneles de admin disponibles. 'null' es la home normal.
+const ADMIN_PANELS = {
+  users: 'users',
+  ingredientCategories: 'ingredientCategories',
+  ingredients: 'ingredients',
+};
+
+// Recibe: isAdmin (habilita los paneles de administración en la sidebar).
 function HomePage({ isAdmin }) {
-  // Solo tiene efecto para un admin: alterna entre la home normal y el panel de usuarios.
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const handleToggleAdminPanel = () => setShowAdminPanel((prev) => !prev);
+  // Panel admin activo: null = home normal, o una clave de ADMIN_PANELS.
+  const [activeAdminPanel, setActiveAdminPanel] = useState(null);
+
+  // Alterna un panel: si ya está activo lo cierra, si no lo abre.
+  const handleTogglePanel = (panel) => {
+    setActiveAdminPanel((prev) => (prev === panel ? null : panel));
+  };
 
   return (
     <div className="HomePage">
-      <Sidebar isAdmin={isAdmin} showAdminPanel={showAdminPanel} onToggleAdminPanel={handleToggleAdminPanel} />
+      <Sidebar
+        isAdmin={isAdmin}
+        activeAdminPanel={activeAdminPanel}
+        onTogglePanel={handleTogglePanel}
+      />
 
       <div className="HomePage-content">
         <main className="HomePage-main">
-          {isAdmin && showAdminPanel ? (
+          {isAdmin && activeAdminPanel === ADMIN_PANELS.users && (
             <SearchUsersForm />
-          ) : (
+          )}
+
+          {isAdmin && activeAdminPanel === ADMIN_PANELS.ingredientCategories && (
+            <IngredientCategoryPage />
+          )}
+
+          {isAdmin && activeAdminPanel === ADMIN_PANELS.ingredients && (
+            <IngredientPage />
+          )}
+
+          {/* Vista normal de la home cuando no hay panel admin activo */}
+          {(!isAdmin || activeAdminPanel === null) && (
             <>
               <HomeFeatureCards />
 

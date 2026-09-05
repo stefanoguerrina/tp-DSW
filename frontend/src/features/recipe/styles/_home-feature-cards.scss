@@ -1,0 +1,74 @@
+// Estilos de las 3 cards de acceso rápido de la home (features/recipe/components/HomeFeatureCards).
+@use '../../../styles/abstracts' as *;
+
+.HomeFeatureCards {
+  margin-bottom: $spacing-xl;
+
+  &-heading {
+    font-family: $font-headline;
+    font-size: 24px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $color-on-surface;
+    margin: 0 0 $spacing-lg;
+  }
+
+  &-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &-card {
+    background: $color-surface-container-low;
+    border: 2px solid $color-outline-variant;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: $spacing-sm;
+    cursor: pointer;
+    font-family: $font-body;
+    font-weight: 700;
+    color: $color-on-surface;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .material-symbols-outlined {
+      font-size: 40px;
+    }
+
+    &:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: $shadow-level-2;
+    }
+
+    &--secondary {
+      border-color: rgba($color-secondary, 0.3);
+      .material-symbols-outlined {
+        color: $color-secondary;
+      }
+    }
+
+    &--tertiary {
+      border-color: rgba($color-tertiary, 0.3);
+      .material-symbols-outlined {
+        color: $color-tertiary;
+      }
+    }
+
+    &--primary {
+      border-color: rgba($color-primary, 0.3);
+      .material-symbols-outlined {
+        color: $color-primary;
+      }
+    }
+  }
+}

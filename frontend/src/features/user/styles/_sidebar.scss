@@ -109,4 +109,12 @@
   &-link:hover &-tooltip {
     opacity: 1;
   }
+
+  // Separador visual entre los links de navegación general y los de admin.
+  &-divider {
+    width: 60%;
+    border: none;
+    border-top: 1px solid $color-outline-variant;
+    margin: 0;
+  }
 }
