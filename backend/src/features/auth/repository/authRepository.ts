@@ -37,7 +37,7 @@ export const authRepository = {
       where: { userId },
       select: { roleId: true },
     });
-    return rows.map((r) => r.roleId);
+    return rows.map((r: { roleId: number }) => r.roleId);
   },
 
 };
